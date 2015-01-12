@@ -1,0 +1,189 @@
+//
+//  swarmBoid.cpp
+//  emptyExample
+//
+//  Created by Janwillem te Voortwis on 03/01/15.
+//
+//
+#include "ofMain.h"
+#include "swarmBoid.h"
+
+
+ofVec2f mouse;
+swarmBoid::swarmBoid(){
+    maxSpeed = 7;           //swarming weighfactors
+    moveCenter = 0.01;
+    neighborAtract = 0.001;
+    neighborRepel = 0.15;
+    matchVelocity = 0.125;
+    objectRepel = 0.1;
+    mapWeight = 0.1;
+    average = 1;
+}
+
+
+//------------------------------------------------------------------
+void swarmBoid::set(vector<ofVec4f> * map, ofxCvContourFinder * contour){
+    contourPointer = contour;
+    mapPointer = map;
+    pos.x = ofRandomWidth();// random position
+    pos.y = ofRandomHeight();
+    
+    vel.x = ofRandom(-3.9, 3.9);//random velocity
+    vel.y = ofRandom(-3.9, 3.9);
+    
+    
+    scale = ofRandom(1.0, 1.5);//random scale
+    
+
+}
+
+//------------------------------------------------------------------
+void swarmBoid::update(vector<swarmBoid> b, int p){
+    vectorPos = *mapPointer;
+    v1.set(0,0); // the vector towards the center of the swarm
+    v2.set(0,0); // the vector to repel from nearby boids
+    v3.set(0,0); // the vector to match velocity of nearby boids
+    v4.set(0,0); // the vector to attract to nearby boids
+    v5.set(0,0); // the vector to repel from objects
+    numberNeighbours = 0; // to keep track of the number of nearby boids
+
+    for(unsigned int i = 0; i < b.size(); i++){ // check for every boid
+        
+        if(i !=p) { // exclude the boid that is currently updating
+           
+            dist = distance(b[i].pos,b[p].pos);// calculate distance from selected boid to checking boid
+            
+            if(dist<100){ // boids check in 100 units for other boids
+                
+                if(dist<30){ // if its too close the repel vector gets increased
+                    v2 -= (b[i].pos - b[p].pos);
+                }else{ // if its too far away the attract vector gets increased
+                    v4 += (b[i].pos - b[p].pos);
+                }
+               
+                v1 += b[i].pos; // movement towards center is the avarge position
+                v3 += b[i].vel; // mathing velocity is the avarage velocity
+                numberNeighbours++; // to calculate a avarage you need the number of entries
+            }
+            
+        }else{
+            int closestId = (round(b[p].pos.x/(ofGetWidth()/20))-1)+((round(b[p].pos.y/(ofGetHeight()/15))-1)*20);
+            ofVec2f temp;
+            for(int u = 0; u<20; u++){
+                if(closestId != 0+(u*15) || closestId !=20+(u*15) || closestId != u || closestId != (14*20)+u ){
+                    for(int k = -average; k<=average; k++){
+                        temp.x += (vectorPos[closestId+k].z);
+                        temp.y +=  (vectorPos[(closestId+k)+20].w);
+                    }
+                    
+                    
+                    
+                    v5.x += (temp.x/average)*mapWeight;
+                    v5.y += (temp.y/average)*mapWeight;
+                
+                }else{
+                    v5.x += (vectorPos[closestId].z);
+                    v5.y += (vectorPos[closestId].w);
+                
+                }
+            
+                
+            }
+          
+            
+            
+            if(distance(mouse,b[p].pos)<50){ // if a object gets close the objectrepel vector gets increased
+                    v5 += (b[p].pos - mouse)*10;
+            }
+        
+        }
+        
+            
+        
+    }
+
+    v1 = v1/(numberNeighbours);// calculate avarage
+    v1 = (v1 - b[p].pos);  // calculate vector
+    v3 = v3/(numberNeighbours); // calculate avarage
+    
+    if(numberNeighbours != 0) {
+        vel+= (moveCenter * v1) + (neighborRepel* v2) + (matchVelocity*v3)+ (neighborAtract*v4)+ (objectRepel* v5);// add all the vectors with their weightfactors
+    }
+    else vel+= 0.1 * v5; // if a boid has no neighbor it vectors v1,2,3,4 have no effect
+    
+    
+    if(vel.length() > maxSpeed){// if a boid exceeds maxspeed it is slowed down
+        vel *= 0.8;
+        if(vel.length() > maxSpeed) vel = vel.normalize()*maxSpeed;
+    }
+    
+    if(vel.length()  < maxSpeed/10){// if a boid is slower than the minimum speed it gets sped up
+        vel.set(1,1);
+    }
+    
+    pos += vel; // update position
+    //----------------------------------------
+    
+    float w = ((640.0)-(44*1.5))/ofGetWidth();
+    float h = ((480.0)-50)/ofGetHeight();
+    
+    for(int i = 0; i < contourPointer->nBlobs; i++) {
+        ofxCvBlob blob = contourPointer->blobs.at(i);
+        // do something fun with blob
+        ofPolyline line;
+        line.addVertices(blob.pts);
+        if(line.inside((int)((b[p].pos.x*w)+(0.5*44)),(int)((b[p].pos.y*h)+50))){
+            ofSetColor(255,20,20);
+        
+        }else{
+            ofSetColor(20,255,20);
+        
+        }
+        
+    }
+    
+    //-------------------------------------------
+    if( pos.x >= ofGetWidth() ){ // if a boid hits a wall it bounces in the correct direction
+        pos.x = ofGetWidth();
+        vel.x *= -1.0;
+    }else if( pos.x <= 0 ){
+        pos.x = 0;
+        vel.x *= -1.0;
+    }
+    if( pos.y >= ofGetHeight() ){
+        pos.y = ofGetHeight();
+        vel.y *= -1.0;
+    }
+    else if( pos.y <= 0 ){
+        pos.y = 0;
+        vel.y *= -1.0;
+    }
+}
+
+//------------------------------------------------------------------
+void swarmBoid::draw(){
+    
+//    line.clear();
+//    line.addVertex(pos.x,pos.y);
+//    line.addVertex(pos.x+(20*vel.x),pos.y+(20*vel.y));
+//    line.close();
+//    line.draw();
+    
+    contourPointer->draw(0,0,ofGetWidth(),ofGetHeight());
+    
+    ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
+    
+}
+
+//------------------------------------------------------------------
+float swarmBoid::distance(ofVec2f v1, ofVec2f v2){//calculates absolute distance between vectors
+    
+    return abs(v1.distance(v2));
+    
+}
+
+void swarmBoid::mouseUpdate(int x, int y){//update mouse position
+    mouse.x = x;
+    mouse.y = y;
+}
