@@ -19,6 +19,7 @@ swarmBoid::swarmBoid(){
     objectRepel = 0.1;
     mapWeight = 0.1;
     average = 1;
+    c.set(0,255,0);
 }
 
 
@@ -79,12 +80,12 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
                     
                     
                     
-                    v5.x += (temp.x/average)*mapWeight;
-                    v5.y += (temp.y/average)*mapWeight;
+                 //   v5.x += (temp.x/average)*mapWeight;
+                //    v5.y += (temp.y/average)*mapWeight;
                 
                 }else{
-                    v5.x += (vectorPos[closestId].z);
-                    v5.y += (vectorPos[closestId].w);
+                 //   v5.x += (vectorPos[closestId].z);
+                 //   v5.y += (vectorPos[closestId].w);
                 
                 }
             
@@ -125,6 +126,7 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
     pos += vel; // update position
     //----------------------------------------
     
+   
     float w = ((640.0)-(44*1.5))/ofGetWidth();
     float h = ((480.0)-50)/ofGetHeight();
     
@@ -132,9 +134,19 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
         ofxCvBlob blob = contourPointer->blobs.at(i);
         // do something fun with blob
         ofPolyline line;
-        line.addVertices(blob.pts);
-        cout<<blob.centroid<<endl;
         
+        line.addVertices(blob.pts);
+        line.close();
+        if(line.inside((int)((pos.x*w)+(0.5*44)),(int)((pos.y*h)))){
+            c.set(255,0,0);
+            float temp = vel.length();
+            vel = -1*(blob.centroid-pos);
+            vel.normalize();
+            vel *= temp;
+            break;
+        }else{
+            c.set(0,255,0);
+        }
     }
     
     //-------------------------------------------
@@ -163,9 +175,14 @@ void swarmBoid::draw(){
 //    line.addVertex(pos.x+(20*vel.x),pos.y+(20*vel.y));
 //    line.close();
 //    line.draw();
+   
+       
+            
+        
+       
+        
     
-    contourPointer->draw(0,0,ofGetWidth(),ofGetHeight());
-    
+    ofSetColor(c);
     ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
     
 }

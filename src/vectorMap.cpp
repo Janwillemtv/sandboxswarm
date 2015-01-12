@@ -74,9 +74,10 @@ void vectorMap::update(){
                 pix[i] = 0;
             }
         }
-
-        grayImage.flagImageChanged();
         
+        
+        grayImage.flagImageChanged();
+
         contour.findContours(grayImage, 30, 150000, 10, false);
         
         for(int i = 0; i < numPixels; i++) {
@@ -148,8 +149,7 @@ void vectorMap::draw(){
     stringstream reportStream;
     reportStream
     << "set near threshold " << nearThreshold << " (press: + -)" << endl
-    << "set far threshold " << farThreshold << " (press: < >) num blobs found " << contour.nBlobs<<endl
-    << "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl;
+    << "set far threshold " << farThreshold << " (press: < >) num blobs found " << contour.nBlobs<<endl;
    ofDrawBitmapString(reportStream.str(), 20, 652);
 }
 

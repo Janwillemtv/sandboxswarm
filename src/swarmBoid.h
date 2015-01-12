@@ -33,8 +33,8 @@ class swarmBoid{
     float distance(ofVec2f v1, ofVec2f v2);
     void mouseUpdate(int x, int y);
     
-    float uniqueVal;
     float scale;
+    ofColor c;
     
     ofVec2f v1, v2, v3, v4, v5;
     
