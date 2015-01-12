@@ -133,13 +133,7 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
         // do something fun with blob
         ofPolyline line;
         line.addVertices(blob.pts);
-        if(line.inside((int)((b[p].pos.x*w)+(0.5*44)),(int)((b[p].pos.y*h)+50))){
-            ofSetColor(255,20,20);
-        
-        }else{
-            ofSetColor(20,255,20);
-        
-        }
+        cout<<blob.centroid<<endl;
         
     }
     
