@@ -27,14 +27,16 @@ class swarmBoid{
     ofPoint pos;
     ofPoint vel;
     
-    void set(vector<ofVec4f> * mapPointer, ofxCvContourFinder * contourPointer);
+    void set(int mode, vector<ofVec4f> * mapPointer, ofxCvContourFinder * contourPointer);
     void update(vector<swarmBoid> b, int p);
     void draw();
     float distance(ofVec2f v1, ofVec2f v2);
     void mouseUpdate(int x, int y);
     
+    int mode;
     float scale;
     ofColor c;
+    Boolean drawShip;
     
     ofVec2f v1, v2, v3, v4, v5;
     

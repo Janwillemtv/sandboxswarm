@@ -16,6 +16,7 @@ vectorMap::vectorMap(){
     times = 5;
     max = 90;
     min = 7;
+    drawVector = calibrate = thresh = false;
 }
 //-------------------------------------------------
 void vectorMap::set(int rows, int columns){
@@ -127,16 +128,66 @@ void vectorMap::update(){
             }
             
         }
+    
+    //============================================
+   
+    if(trees.size()<500){
+        ofVec2f pos;
+        pos.set((int)ofRandom(0.0,ofGetWidth()),(int)ofRandom(0.0,ofGetHeight()));
+
+    
+        for(int i = 0; i < contour.nBlobs; i++) {
+            ofxCvBlob blob = contour.blobs.at(i);
+            // do something fun with blob
+            
+            ofPolyline line;
+            
+            line.addVertices(blob.pts);
+            line.close();
+            if(line.inside((int)((pos.x*w)+(0.5*44)),(int)((pos.y*h)))){
+                trees.push_back(growIland(pos));
+                  
+            }
+
+            for (auto it = trees.begin(); it != trees.end();){
+             
+            
+                if(line.inside((int)((it->pos.x*w)+(0.5*44)),(int)((it->pos.y*h)))){
+                    it->setNull(ofGetElapsedTimeMillis());
+    
+                    it++;
+                }else{
+                    
+                    if(ofGetElapsedTimeMillis() - it->erase>1000){
+                    it = trees.erase(it);
+                    }else it++;
+                }
+       
+            }
+            
+        }
+    }
+    
+    //========================================================
+    
+    
+    for(int j = 0; j<trees.size(); j++){
+        trees[j].update();
+    }
 
 }
-
+//-----------------------------------------------------------
 void vectorMap::draw(){
-    ofSetColor(255);
-   //colorImg.drawROI(0, 0, ofGetWidth(), ofGetHeight());
-    ofSetColor(20,20,200);
+    if (calibrate) colorImg.drawROI(0,0,ofGetWidth(),ofGetHeight());
+    ofSetColor(20,20,200); //set blue for seacolor
    grayImage.drawROI(0, 0, ofGetWidth(), ofGetHeight());
-    ofSetColor(255, 0, 0);
-    for(unsigned int i = 0; i <vec.size(); i++){
+    
+    for(int j = 0; j<trees.size(); j++){ // draw the trees
+        trees[j].draw();
+    }
+    if(drawVector){
+    ofSetColor(255, 0, 0);//set color for vectors
+    for(unsigned int i = 0; i <vec.size(); i++){ //draw the vector map
         line[i].clear();
         line[i].addVertex(vec[i].x,vec[i].y);
         line[i].addVertex(vec[i].x+(5*vec[i].z),vec[i].y+(5*vec[i].w));
@@ -144,17 +195,21 @@ void vectorMap::draw(){
         line[i].draw();
         
     }
+    }
+  
     
-    
-    stringstream reportStream;
+    if(thresh){
+    stringstream reportStream;//calbration information
     reportStream
     << "set near threshold " << nearThreshold << " (press: + -)" << endl
     << "set far threshold " << farThreshold << " (press: < >) num blobs found " << contour.nBlobs<<endl;
    ofDrawBitmapString(reportStream.str(), 20, 652);
+    }
 }
 
+
 //-------------------------------------------------
-vector <ofVec4f> * vectorMap::vectorGrid(){
+vector <ofVec4f> * vectorMap::vectorGrid(){//return the pointers
     
     return  &vec;
 }
@@ -163,13 +218,13 @@ ofxCvContourFinder * vectorMap::contours(){
     return &contour;
 }
 
-void vectorMap::nearAlter(int i){
+void vectorMap::nearAlter(int i){//calibrate the sensor
     nearThreshold+= i;
     if(nearThreshold >= 255) nearThreshold = 255;
     if(nearThreshold<= 0) nearThreshold = 0;
 }
 
-void vectorMap::farAlter(int i){
+void vectorMap::farAlter(int i){//calibrate the sensor
     farThreshold+= i;
     if(farThreshold >= 255) farThreshold = 255;
     if(farThreshold<= 0) farThreshold = 0;

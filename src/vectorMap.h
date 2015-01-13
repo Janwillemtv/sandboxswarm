@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
-#include "iland.h"
+#include "growIland.h"
 
 
 class vectorMap{
@@ -37,9 +37,11 @@ class vectorMap{
     int farThreshold;
     
     vector<ofPolyline> line;
-    //vector<iland> ilands;
+    vector<growIland> trees;
     
-   
+    Boolean drawVector;
+    Boolean calibrate;
+    Boolean thresh;
     int row, column;
     float weight;
     float diffx, diffy;

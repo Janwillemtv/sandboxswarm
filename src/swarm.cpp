@@ -9,14 +9,14 @@
 #include "swarm.h"
 
 swarm::swarm(){
-
+    
 }
 //------------------------------
-void swarm::set(int num,vector <ofVec4f> * mapPointer,ofxCvContourFinder * contourPointer){
+void swarm::set(int mode, int num,vector <ofVec4f> * mapPointer,ofxCvContourFinder * contourPointer){
     b.assign(num, swarmBoid()); // create swarm
     
     for(unsigned int i = 0; i < b.size(); i++){ // set swarm
-        b[i].set(mapPointer,contourPointer);
+        b[i].set(mode,mapPointer,contourPointer);
     }
 }
 

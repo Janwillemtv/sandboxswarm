@@ -10,8 +10,8 @@ void ofApp::setup(){
     
     int num = 50;
    
-    flock.set(num,map.vectorGrid(),map.contours());
-    
+    fish.set(1,num,map.vectorGrid(),map.contours());
+    people.set(2,10,map.vectorGrid(),map.contours());
     
     
 }
@@ -19,14 +19,16 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     map.update();
-    flock.update();
+    fish.update();
+    people.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
     map.draw();
-    flock.draw();
+    fish.draw();
+    people.draw();
     ofSetColor(255,0,0);
     ofCircle(mouse.x, mouse.y, 15);
    
@@ -53,6 +55,18 @@ void ofApp::keyPressed(int key){
         case '-':
             map.nearAlter(-1);
             break;
+        
+        case 'v':
+            map.drawVector = !map.drawVector;
+            break;
+        
+        case 'c':
+            map.calibrate = !map.calibrate;
+            break;
+           
+        case 't':
+            map.thresh = !map.thresh;
+            break;
     
     }
 }
@@ -64,7 +78,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-    flock.mouseUpdate(x, y);
+    fish.mouseUpdate(x, y);
     mouse.x = x;
     mouse.y = y;
 }

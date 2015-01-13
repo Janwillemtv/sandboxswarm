@@ -16,7 +16,7 @@
 class swarm{
     public:
         swarm();
-        void set(int num,vector<ofVec4f> * mapPointer,ofxCvContourFinder * contourPointer);
+        void set(int mode, int num,vector<ofVec4f> * mapPointer,ofxCvContourFinder * contourPointer);
         void update();
         void draw();
         void mouseUpdate(int x, int y);

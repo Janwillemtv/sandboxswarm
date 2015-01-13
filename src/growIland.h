@@ -6,9 +6,29 @@
 //
 //
 
-#ifndef __sandboxSwarm__growIland__
-#define __sandboxSwarm__growIland__
+#pragma once
 
 #include <stdio.h>
+#include "ofMain.h"
 
-#endif /* defined(__sandboxSwarm__growIland__) */
+
+
+class growIland{
+    public:
+        growIland(ofVec2f position);
+    
+        void set();
+        void update();
+        void draw();
+        void setNull(unsigned int time);
+    
+        ofVec2f pos;
+    
+        int growFac;
+        int size;
+        int finalSize;
+    int randomTime;
+        unsigned int erase;
+        ofColor c;
+
+};

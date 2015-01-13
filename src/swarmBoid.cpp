@@ -11,31 +11,52 @@
 
 ofVec2f mouse;
 swarmBoid::swarmBoid(){
-    maxSpeed = 7;           //swarming weighfactors
-    moveCenter = 0.01;
-    neighborAtract = 0.001;
-    neighborRepel = 0.15;
-    matchVelocity = 0.125;
-    objectRepel = 0.1;
-    mapWeight = 0.1;
-    average = 1;
-    c.set(0,255,0);
+  
 }
 
 
 //------------------------------------------------------------------
-void swarmBoid::set(vector<ofVec4f> * map, ofxCvContourFinder * contour){
+void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * contour){
+    mode = modus;
     contourPointer = contour;
     mapPointer = map;
-    pos.x = ofRandomWidth();// random position
-    pos.y = ofRandomHeight();
+    if(mode==1){ // fish
+        maxSpeed = 7;           //swarming weighfactors
+        moveCenter = 0.01;
+        neighborAtract = 0.001;
+        neighborRepel = 0.15;
+        matchVelocity = 0.125;
+        objectRepel = 0.1;
+        mapWeight = 0.05;
+        average = 1;
+        c.set(255,204,0);
+        drawShip = false;
+        //================================================
+        pos.x = ofRandomWidth();// random position
+        pos.y = ofRandomHeight();
     
-    vel.x = ofRandom(-3.9, 3.9);//random velocity
-    vel.y = ofRandom(-3.9, 3.9);
-    
-    
-    scale = ofRandom(1.0, 1.5);//random scale
-    
+        vel.x = ofRandom(-3.9, 3.9);//random velocity
+        vel.y = ofRandom(-3.9, 3.9);
+        scale = ofRandom(1.0, 1.5);//random scale
+    }else if(mode == 2){ // people
+        maxSpeed = 7;           //swarming weighfactors
+        moveCenter = 0.01;
+        neighborAtract = 0.001;
+        neighborRepel = 0.15;
+        matchVelocity = 0.125;
+        objectRepel = 0.1;
+        mapWeight = -0.06;
+        average = 1;
+        c.set(143,46,73);
+        drawShip = true;
+        //================================================
+        pos.x = ofRandomWidth();// random position
+        pos.y = ofRandomHeight();
+        
+        vel.x = ofRandom(-3.9, 3.9);//random velocity
+        vel.y = ofRandom(-3.9, 3.9);
+        scale = ofRandom(2.0, 2.5);//random scale
+    }
 
 }
 
@@ -80,12 +101,12 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
                     
                     
                     
-                 //   v5.x += (temp.x/average)*mapWeight;
-                //    v5.y += (temp.y/average)*mapWeight;
+                    v5.x += (temp.x/average)*mapWeight;
+                    v5.y += (temp.y/average)*mapWeight;
                 
                 }else{
-                 //   v5.x += (vectorPos[closestId].z);
-                 //   v5.y += (vectorPos[closestId].w);
+                    v5.x += (vectorPos[closestId].z);
+                    v5.y += (vectorPos[closestId].w);
                 
                 }
             
@@ -138,14 +159,16 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
         line.addVertices(blob.pts);
         line.close();
         if(line.inside((int)((pos.x*w)+(0.5*44)),(int)((pos.y*h)))){
-            c.set(255,0,0);
+            if(mode==1){
             float temp = vel.length();
             vel = -1*(blob.centroid-pos);
             vel.normalize();
             vel *= temp;
+            }
+            if(mode == 2) drawShip = false;
             break;
         }else{
-            c.set(0,255,0);
+            if(mode == 2) drawShip = true;
         }
     }
     
@@ -178,12 +201,16 @@ void swarmBoid::draw(){
    
        
             
-        
-       
-        
+    if(drawShip){
+    ofSetColor(74, 62, 14);
+    ofVec2f temp = vel;
+    ofDrawArrow(pos-(10*temp.normalize()), pos+(20*temp.normalize()),10);
+    ofDrawArrow(pos+(10*temp.normalize()), pos-(20*temp.normalize()),10);
+    }
     
     ofSetColor(c);
     ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
+    
     
 }
 
