@@ -109,9 +109,9 @@ void swarmBoid::draw(){
         ofPath shipLine;
         ofVec2f boatFront = pos + (20*temp.normalize());  //calculate front of the boat
         ofVec2f boatBehind = pos - (20*temp.normalize());  //calculate behind of the boat
-        ofVec2f boatBehindLeft = boatBehind - (10*temp.getRotated(90).normalize());  // calculate behind left and right respectively
+        ofVec2f boatBehindLeft = boatBehind + (10*temp.getRotated(-90).normalize());  // calculate behind left and right respectively
         ofVec2f boatBehindRight = boatBehind + (10*temp.getRotated(90).normalize());
-        ofVec2f boatMiddleLeft = pos - (10*temp.getRotated(90).normalize());  // calculate middle left and right respectively
+        ofVec2f boatMiddleLeft = pos + (10*temp.getRotated(-90).normalize());  // calculate middle left and right respectively
         ofVec2f boatMiddleRight = pos + (10*temp.getRotated(90).normalize());
 
         shipLine.curveTo(boatBehind.x,boatBehind.y);
