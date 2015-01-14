@@ -183,11 +183,11 @@ void swarmBoid::draw(){
 //    line.close();
 //    line.draw();
    
-       
+       ofVec2f temp = vel;
             
     if(drawShip){// draw the boat
     ofSetColor(74, 62, 14);
-        ofVec2f temp = vel;
+        
         ofDrawArrow(pos-(10*temp.normalize()), pos+(20*temp.normalize()),10);
         ofDrawArrow(pos+(10*temp.normalize()), pos-(20*temp.normalize()),10);
     }
