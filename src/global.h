@@ -10,3 +10,5 @@
 
 extern const int borderTop;
 extern const int borderSide;
+extern const int row;
+extern const int column;

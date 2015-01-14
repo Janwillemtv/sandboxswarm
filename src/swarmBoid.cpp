@@ -62,7 +62,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
 
 }
 
-//------------------------------------------------------------------
+//====================================================================
 void swarmBoid::update(vector<swarmBoid> b, int p){
     vectorPos = *mapPointer;
     center.set(0,0); // the vector towards the center of the swarm
@@ -81,6 +81,8 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
     center = (center - swarmPointer[itSelf]->pos);  // calculate vector
     match = match/(numberNeighbours); // calculate avarage
     
+    getMapVector();
+    
     if(numberNeighbours != 0) {
         vel+= (moveCenter * center) + (neighborRepel* nRepel) + (matchVelocity*match)+ (neighborAtract*nAtract)+ (objectRepel* oRepel);// add all the vectors with their weightfactors
     }
@@ -88,12 +90,12 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
     
     pos += vel; // update position
     
-    calcColision();// calculate
-    alterVector();
+    calcColision();// calculate collision with ilands
+    alterVector();// alter the vectors (maxSpeed&Worldcollision)
  
 }
 
-//------------------------------------------------------------------
+//====================================================================
 void swarmBoid::draw(){
     
 //    line.clear();
@@ -144,13 +146,13 @@ void swarmBoid::draw(){
     
 }
 
-//------------------------------------------------------------------
+//====================================================================
 float swarmBoid::distance(ofVec2f v1, ofVec2f v2){//calculates absolute distance between vectors
     
     return abs(v1.distance(v2));
     
 }
-
+//====================================================================
 void swarmBoid::calcSwarm(int i){
    
     dist = distance(swarmPointer[i]->pos,swarmPointer[itSelf]->pos);// calculate distance from selected boid to checking boid
@@ -178,10 +180,8 @@ void swarmBoid::calcSwarm(int i){
 }
 
 //============================================================================
-void swarmBoid::getMapVector(int i){
-    int closestId = (round(swarmPointer[itSelf]->pos.x/(ofGetWidth()/20))-1)+((round(swarmPointer[itSelf]->pos.y/(ofGetHeight()/15))-1)*20);// the the id of the closest vector in vector map
-    ofVec2f temp;
-    
+void swarmBoid::getMapVector(){
+    int closestId = (round(swarmPointer[itSelf]->pos.x/(ofGetWidth()/column))-1)+((round(swarmPointer[itSelf]->pos.y/(ofGetHeight()/row))-1)*row);// the the id of the closest vector in vector map
     oRepel.x += (vectorPos[closestId].z)*mapWeight;// add the vectormap-vector
     oRepel.y += (vectorPos[closestId].w)*mapWeight;
 
@@ -244,7 +244,7 @@ void swarmBoid::alterVector(){
     }
 
 }
-
+//====================================================================
 void swarmBoid::mouseUpdate(int x, int y){//update mouse position
     mouse.x = x;
     mouse.y = y;
