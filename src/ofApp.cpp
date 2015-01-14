@@ -5,7 +5,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetVerticalSync(true);
-    map.set(15,20);
+    map.set();
 
     
     int num = 50;
@@ -39,21 +39,25 @@ void ofApp::keyPressed(int key){
     switch(key){
         case '>':
         case '.':
-            map.farAlter(1);
+            map.farThreshold +=1;
+            if(map.farThreshold>=255) map.farThreshold = 255;
             break;
             
         case '<':
         case ',':
-            map.farAlter(-1);
+            map.farThreshold -= 1;
+            if(map.farThreshold<=0) map.farThreshold = 0;
             break;
             
         case '+':
         case '=':
-            map.nearAlter(1);
+            map.nearThreshold +=1;
+            if(map.nearThreshold>=255) map.nearThreshold = 255;
             break;
             
         case '-':
-            map.nearAlter(-1);
+            map.nearThreshold -= 1;
+            if(map.nearThreshold<=0) map.nearThreshold = 0;
             break;
         
         case 'v':
@@ -84,7 +88,9 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h)
-{}
+{
+    map.reposition();
+}
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 

@@ -36,7 +36,7 @@ class swarmBoid{
     void calcSwarm(int i);
     void calcColision();
     void alterVector();
-    void getMapVector(int i);
+    void getMapVector();
     void mouseUpdate(int x, int y);
     
     int mode;

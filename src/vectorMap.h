@@ -18,12 +18,14 @@ class vectorMap{
     public:
     vectorMap();
     vector<ofVec4f> vec;
-    void set(int rows, int columns);
+    void set();
     void update();
     void draw();
     void close();
-    void nearAlter(int i);
-    void farAlter(int i);
+    void reposition();
+    void getKinectImage();
+    void calcVectors();
+    void makeTrees();
     vector<ofVec4f> * vectorGrid();
     ofxCvContourFinder * contours();
     
@@ -42,7 +44,7 @@ class vectorMap{
     bool drawVector;
     bool calibrate;
     bool thresh;
-    int row, column;
+  //  int row, column;
     float weight;
     float diffx, diffy;
     int times;
