@@ -191,11 +191,15 @@ void swarmBoid::draw(){
         ofDrawArrow(pos-(10*temp.normalize()), pos+(20*temp.normalize()),10);
         ofDrawArrow(pos+(10*temp.normalize()), pos-(20*temp.normalize()),10);
     }
+    ofSetColor(c);
     if(mode==1) { // fish
-        ofDrawArrow(pos-(20*temp.normalize()), pos,10);
+        ofVec2f triBehind = pos - (10*temp.normalize());  //calculate behind of the tail
+        ofVec2f triBehindLeft = triBehind - (8*temp.getRotated(90).normalize());  // calculate left and right respectively
+        ofVec2f triBehindRight = triBehind + (8*temp.getRotated(90).normalize());
+        ofTriangle(pos.x,pos.y,triBehindLeft.x,triBehindLeft.y,triBehindRight.x,triBehindRight.y);  // draw triangle on calculated vectors
     }
     
-    ofSetColor(c);
+
     ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
     
     
