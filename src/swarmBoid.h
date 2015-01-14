@@ -34,6 +34,8 @@ class swarmBoid{
     void draw();
     float distance(ofVec2f v1, ofVec2f v2);
     void calcSwarm(int i);
+    void calcColision();
+    void alterVector();
     void getMapVector(int i);
     void mouseUpdate(int x, int y);
     
@@ -42,7 +44,7 @@ class swarmBoid{
     ofColor c;
     bool drawShip;
     
-    ofVec2f v1, v2, v3, v4, v5;
+    ofVec2f center, nRepel, match, nAtract, oRepel;
     
     float dist;
     

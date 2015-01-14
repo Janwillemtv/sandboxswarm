@@ -65,91 +65,32 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
 //------------------------------------------------------------------
 void swarmBoid::update(vector<swarmBoid> b, int p){
     vectorPos = *mapPointer;
-    v1.set(0,0); // the vector towards the center of the swarm
-    v2.set(0,0); // the vector to repel from nearby boids
-    v3.set(0,0); // the vector to match velocity of nearby boids
-    v4.set(0,0); // the vector to attract to nearby boids
-    v5.set(0,0); // the vector to repel from objects
+    center.set(0,0); // the vector towards the center of the swarm
+    nRepel.set(0,0); // the vector to repel from nearby boids
+    match.set(0,0); // the vector to match velocity of nearby boids
+    nAtract.set(0,0); // the vector to attract to nearby boids
+    oRepel.set(0,0); // the vector to repel from objects
     numberNeighbours = 0; // to keep track of the number of nearby boids
 
     for(unsigned int i = 0; i < b.size(); i++){ // check for every boid
         
-        if(i !=p) { // exclude the boid that is currently updating
-           
             calcSwarm(i);//calculate the swarming vectors
-            
-        }
-        
-            
         
     }
-    v1 = v1/(numberNeighbours);// calculate avarage
-    v1 = (v1 - b[p].pos);  // calculate vector
-    v3 = v3/(numberNeighbours); // calculate avarage
-
-  
+    center = center/(numberNeighbours);// calculate avarage
+    center = (center - swarmPointer[itSelf]->pos);  // calculate vector
+    match = match/(numberNeighbours); // calculate avarage
     
     if(numberNeighbours != 0) {
-        vel+= (moveCenter * v1) + (neighborRepel* v2) + (matchVelocity*v3)+ (neighborAtract*v4)+ (objectRepel* v5);// add all the vectors with their weightfactors
+        vel+= (moveCenter * center) + (neighborRepel* nRepel) + (matchVelocity*match)+ (neighborAtract*nAtract)+ (objectRepel* oRepel);// add all the vectors with their weightfactors
     }
-    else vel+= 0.1 * v5; // if a boid has no neighbor it vectors v1,2,3,4 have no effect
-    
-    
-    if(vel.length() > maxSpeed){// if a boid exceeds maxspeed it is slowed down
-        vel *= 0.8;
-        if(vel.length() > maxSpeed) vel = vel.normalize()*maxSpeed;
-    }
-    
-    if(vel.length()  < maxSpeed/10){// if a boid is slower than the minimum speed it gets sped up
-        vel.set(1,1);
-    }
+    else vel+= 0.1 * oRepel; // if a boid has no neighbor it vectors center,2,3,4 have no effect
     
     pos += vel; // update position
-    //----------------------------------------//blob-colision
     
-   
-    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
-    float h = ((480.0)-borderTop)/ofGetHeight();
-    
-    for(int i = 0; i < contourPointer->nBlobs; i++) {// check for every blob found
-        ofxCvBlob blob = contourPointer->blobs.at(i);
-        // do something fun with blob
-        ofPolyline line;
-        
-        line.addVertices(blob.pts);
-        line.close();
-        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
-            if(mode==1){
-            float temp = vel.length();
-            vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
-            vel.normalize();// set maximal velocity away from blob
-            vel *= -10;
-            c.set(255,0,0);
-            }
-            if(mode == 2) drawShip = false;// if on land dont draw a ship
-            break;
-        }else{
-            if(mode == 2) drawShip = true;// if on water draw ship
-            if(mode==1)c.set(255,204,0);
-        }
-    }
-    
-    //-------------------------------------------
-    if( pos.x >= ofGetWidth() ){ // if a boid hits a wall it bounces in the correct direction
-        pos.x = ofGetWidth();
-        vel.x *= -1.0;
-    }else if( pos.x <= 0 ){
-        pos.x = 0;
-        vel.x *= -1.0;
-    }
-    if( pos.y >= ofGetHeight() ){
-        pos.y = ofGetHeight();
-        vel.y *= -1.0;
-    }
-    else if( pos.y <= 0 ){
-        pos.y = 0;
-        vel.y *= -1.0;
-    }
+    calcColision();// calculate
+    alterVector();
+ 
 }
 
 //------------------------------------------------------------------
@@ -197,30 +138,90 @@ void swarmBoid::calcSwarm(int i){
     if(dist<100){ // boids check in 100 units for other boids
         
         if(dist<30){ // if its too close the repel vector gets increased
-            v2 -= (swarmPointer[i]->pos - swarmPointer[itSelf]->pos);
+            nRepel -= (swarmPointer[i]->pos - swarmPointer[itSelf]->pos);
         }else{ // if its too far away the attract vector gets increased
-            v4 += (swarmPointer[i]->pos - swarmPointer[itSelf]->pos);
+            nAtract += (swarmPointer[i]->pos - swarmPointer[itSelf]->pos);
         }
         
-        v1 += swarmPointer[i]->pos; // movement towards center is the avarge position
-        v3 += swarmPointer[i]->vel; // mathing velocity is the avarage velocity
+        center += swarmPointer[i]->pos; // movement towards center is the avarge position
+        match += swarmPointer[i]->vel; // mathing velocity is the avarage velocity
         numberNeighbours++; // to calculate a avarage you need the number of entries
     }
+    if(i==itSelf){
+        
+        if(distance(mouse,swarmPointer[itSelf]->pos)<50){ // if a object gets close the objectrepel vector gets increased
+            oRepel += (swarmPointer[itSelf]->pos - mouse)*4;
+        }
     
-    if(distance(mouse,swarmPointer[itSelf]->pos)<50){ // if a object gets close the objectrepel vector gets increased
-        v5 += (swarmPointer[itSelf]->pos - mouse)*10;
     }
-    
-  
 
 }
 
+//============================================================================
 void swarmBoid::getMapVector(int i){
     int closestId = (round(swarmPointer[itSelf]->pos.x/(ofGetWidth()/20))-1)+((round(swarmPointer[itSelf]->pos.y/(ofGetHeight()/15))-1)*20);// the the id of the closest vector in vector map
     ofVec2f temp;
     
-    v5.x += (vectorPos[closestId].z)*mapWeight;// add the vectormap-vector
-    v5.y += (vectorPos[closestId].w)*mapWeight;
+    oRepel.x += (vectorPos[closestId].z)*mapWeight;// add the vectormap-vector
+    oRepel.y += (vectorPos[closestId].w)*mapWeight;
+
+}
+//=============================================================================
+void swarmBoid::calcColision(){
+    
+    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
+    float h = ((480.0)-borderTop)/ofGetHeight();
+    
+    for(int i = 0; i < contourPointer->nBlobs; i++) {// check for every blob found
+        ofxCvBlob blob = contourPointer->blobs.at(i);
+
+        ofPolyline line;
+        
+        line.addVertices(blob.pts);
+        line.close();
+        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
+            if(mode==1){
+                float temp = vel.length();
+                vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
+                vel.normalize();// set maximal velocity away from blob
+                vel *= -10;
+                c.set(255,0,0);
+            }
+            if(mode == 2) drawShip = false;// if on land dont draw a ship
+            break;
+        }else{
+            if(mode == 2) drawShip = true;// if on water draw ship
+            if(mode==1)c.set(255,204,0);
+        }
+    }
+}
+//===============================================================================
+void swarmBoid::alterVector(){
+
+    if(vel.length() > maxSpeed){// if a boid exceeds maxspeed it is slowed down
+        vel *= 0.8;
+        if(vel.length() > maxSpeed) vel = vel.normalize()*maxSpeed;
+    }
+    
+    if(vel.length()  < maxSpeed/10){// if a boid is slower than the minimum speed it gets sped up
+        vel.set(1,1);
+    }
+    //-------------------------------------------
+    if( pos.x >= ofGetWidth() ){ // if a boid hits a wall it bounces in the correct direction
+        pos.x = ofGetWidth();
+        vel.x *= -1.0;
+    }else if( pos.x <= 0 ){
+        pos.x = 0;
+        vel.x *= -1.0;
+    }
+    if( pos.y >= ofGetHeight() ){
+        pos.y = ofGetHeight();
+        vel.y *= -1.0;
+    }
+    else if( pos.y <= 0 ){
+        pos.y = 0;
+        vel.y *= -1.0;
+    }
 
 }
 
