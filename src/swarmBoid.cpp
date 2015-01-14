@@ -114,6 +114,7 @@ void swarmBoid::draw(){
         ofVec2f boatMiddleLeft = pos + (10*temp.getRotated(-90).normalize());  // calculate middle left and right respectively
         ofVec2f boatMiddleRight = pos + (10*temp.getRotated(90).normalize());
 
+        //make a curve to outline the boat
         shipLine.curveTo(boatBehind.x,boatBehind.y);
         shipLine.curveTo(boatBehindRight.x,boatBehindRight.y);
         shipLine.curveTo(boatMiddleRight.x,boatMiddleRight.y);
@@ -122,7 +123,7 @@ void swarmBoid::draw(){
         shipLine.curveTo(boatBehindLeft.x,boatBehindLeft.y);
 
         shipLine.close();
-        shipLine.setFilled(true);
+        shipLine.setFilled(true); //fill the outline and draw it
         shipLine.setFillColor(ofColor(74, 62, 14));
         shipLine.draw();
 
