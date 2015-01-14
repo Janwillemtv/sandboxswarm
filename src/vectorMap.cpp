@@ -42,7 +42,7 @@ void vectorMap::set(int rows, int columns){
     
     int rowCount = 1;
     int columnCount = 1;
-    for(unsigned int i = 0; i <vec.size(); i++){
+    for(int i = 0; i <vec.size(); i++){
         vec[i].x = (ofGetWidth()/columns)*columnCount;
         vec[i].y = (ofGetHeight()/rows)*rowCount;
         
@@ -97,7 +97,7 @@ void vectorMap::update(){
         float w = ((640.0)-(borderSide*1.5))/ofGetWidth();
         float h = ((480.0)-borderTop)/ofGetHeight();
     
-        for(unsigned int i = 0; i <vec.size(); i++){
+        for(int i = 0; i <vec.size(); i++){
             diffx = 0.0;
             diffy = 0.0;
          
@@ -192,7 +192,7 @@ void vectorMap::draw(){
     }
     if(drawVector){
     ofSetColor(255, 0, 0);//set color for vectors
-    for(unsigned int i = 0; i <vec.size(); i++){ //draw the vector map
+    for(int i = 0; i <vec.size(); i++){ //draw the vector map
         line[i].clear();
         line[i].addVertex(vec[i].x,vec[i].y);
         line[i].addVertex(vec[i].x+(5*vec[i].z),vec[i].y+(5*vec[i].w));

@@ -76,7 +76,7 @@
 # add a runtime path to search for those shared libraries, since they aren't 
 # incorporated directly into the final executable application binary.
 ################################################################################
-# PROJECT_LDFLAGS=-Wl,-rpath=./libs
+PROJECT_LDFLAGS=-Wl,-lm,-lrt,-ldl,-rpath=./libs
 
 ################################################################################
 # PROJECT DEFINES
@@ -137,5 +137,5 @@
 #		(default) PROJECT_CC = (blank)
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_CXX = 
-# PROJECT_CC = 
+PROJECT_CXX = clang
+PROJECT_CC = clang
