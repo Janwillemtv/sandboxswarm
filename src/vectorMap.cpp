@@ -207,7 +207,8 @@ void vectorMap::draw(){
     stringstream reportStream;//calbration information
     reportStream
     << "set near threshold " << nearThreshold << " (press: + -)" << endl
-    << "set far threshold " << farThreshold << " (press: < >) num blobs found " << contour.nBlobs<<endl;
+    << "set far threshold " << farThreshold << " (press: < >)"<<endl
+    <<    "num blobs found " << contour.nBlobs<<endl;
    ofDrawBitmapString(reportStream.str(), 20, 652);
     }
 }

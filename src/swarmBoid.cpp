@@ -29,7 +29,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
         objectRepel = 0.1;
         mapWeight = 1.7;
         average = 1;
-        c.set(255,204,0);
+        c.set(ofRandom(230.0,255.0),ofRandom(200.0,210.0),ofRandom(0.0,10.0));
         drawShip = false;
         //================================================
         pos.x = ofRandomWidth();// random position
@@ -47,7 +47,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
         objectRepel = 0.1;
         mapWeight = -1;
         average = 1;
-        c.set(143,46,73);
+        c.set(ofRandom(135.0,145.0),ofRandom(35.0,46.0),ofRandom(70.0,75.0));
         drawShip = true;
         //================================================
         pos.x = ofRandomWidth();// random position
