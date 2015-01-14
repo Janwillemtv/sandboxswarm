@@ -49,6 +49,5 @@ class vectorMap{
     float xAvarage;
     float yAvarage;
     float max, min;
-//int borderTop;
-  //  int borderSide;
+
 };

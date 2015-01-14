@@ -27,7 +27,6 @@ class growIland{
         int growFac;
         int size;
         int finalSize;
-    int randomTime;
         unsigned int erase;
         ofColor c;
 
