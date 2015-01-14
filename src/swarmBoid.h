@@ -32,6 +32,8 @@ class swarmBoid{
     void set(int mode, vector<ofVec4f> * mapPointer, ofxCvContourFinder * contourPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
     void update(vector<swarmBoid> b, int p);
     void draw();
+    void drawBoat();
+    void drawFish();
     float distance(ofVec2f v1, ofVec2f v2);
     void calcSwarm(int i);
     void calcColision();
