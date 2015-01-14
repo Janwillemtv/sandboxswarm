@@ -107,10 +107,29 @@ void swarmBoid::draw(){
        ofVec2f temp = vel;
             
     if(drawShip){// draw the boat
-    ofSetColor(74, 62, 14);
-        
-        ofDrawArrow(pos-(10*temp.normalize()), pos+(20*temp.normalize()),10);
-        ofDrawArrow(pos+(10*temp.normalize()), pos-(20*temp.normalize()),10);
+        ofSetColor(74, 62, 14);
+        ofPath shipLine;
+        ofVec2f boatFront = pos + (20*temp.normalize());  //calculate front of the boat
+        ofVec2f boatBehind = pos - (20*temp.normalize());  //calculate behind of the boat
+        ofVec2f boatBehindLeft = boatBehind + (10*temp.getRotated(-90).normalize());  // calculate behind left and right respectively
+        ofVec2f boatBehindRight = boatBehind + (10*temp.getRotated(90).normalize());
+        ofVec2f boatMiddleLeft = pos + (10*temp.getRotated(-90).normalize());  // calculate middle left and right respectively
+        ofVec2f boatMiddleRight = pos + (10*temp.getRotated(90).normalize());
+
+        shipLine.curveTo(boatBehind.x,boatBehind.y);
+        shipLine.curveTo(boatBehindRight.x,boatBehindRight.y);
+        shipLine.curveTo(boatMiddleRight.x,boatMiddleRight.y);
+        shipLine.curveTo(boatFront.x,boatFront.y);
+        shipLine.curveTo(boatMiddleLeft.x,boatMiddleLeft.y);
+        shipLine.curveTo(boatBehindLeft.x,boatBehindLeft.y);
+
+        shipLine.close();
+        shipLine.setFilled(true);
+        shipLine.setFillColor(ofColor(74, 62, 14));
+        shipLine.draw();
+
+        //ofDrawArrow(pos-(10*temp.normalize()), pos+(20*temp.normalize()),10);
+        //ofDrawArrow(pos+(10*temp.normalize()), pos-(20*temp.normalize()),10);
     }
     ofSetColor(c);
     if(mode==1) { // fish
