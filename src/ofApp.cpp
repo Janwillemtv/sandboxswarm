@@ -9,7 +9,7 @@ void ofApp::setup(){
 
     
     int num = 50;
-   
+    //init all objects
     fish.set(1,num,map.vectorGrid(),map.contours());
     people.set(2,10,map.vectorGrid(),map.contours());
     
@@ -17,25 +17,25 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update(){//update all the objects
     map.update();
     fish.update();
     people.update();
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw(){//draw all objects
     ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
     map.draw();
     fish.draw();
     people.draw();
     ofSetColor(255,0,0);
-    ofCircle(mouse.x, mouse.y, 15);
+    ofCircle(mouse.x, mouse.y, 15);//draw mouse blob that pushes all
    
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key){//keypresses for debug
     switch(key){
         case '>':
         case '.':

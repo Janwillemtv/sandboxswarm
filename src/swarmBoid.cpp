@@ -96,54 +96,51 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
 }
 
 //====================================================================
-void swarmBoid::draw(){
-    
-//    line.clear();
-//    line.addVertex(pos.x,pos.y);
-//    line.addVertex(pos.x+(20*vel.x),pos.y+(20*vel.y));
-//    line.close();
-//    line.draw();
-   
-       ofVec2f temp = vel;
-            
-    if(drawShip){// draw the boat
-        ofSetColor(74, 62, 14);
-        ofPath shipLine;
-        ofVec2f boatFront = pos + (20*temp.normalize());  //calculate front of the boat
-        ofVec2f boatBehind = pos - (20*temp.normalize());  //calculate behind of the boat
-        ofVec2f boatBehindLeft = boatBehind + (10*temp.getRotated(-90).normalize());  // calculate behind left and right respectively
-        ofVec2f boatBehindRight = boatBehind + (10*temp.getRotated(90).normalize());
-        ofVec2f boatMiddleLeft = pos + (10*temp.getRotated(-90).normalize());  // calculate middle left and right respectively
-        ofVec2f boatMiddleRight = pos + (10*temp.getRotated(90).normalize());
+void swarmBoid::draw() {
+    drawBoat();
+    drawFish();
+}
 
-        //make a curve to outline the boat
-        shipLine.curveTo(boatBehind.x,boatBehind.y);
-        shipLine.curveTo(boatBehindRight.x,boatBehindRight.y);
-        shipLine.curveTo(boatMiddleRight.x,boatMiddleRight.y);
-        shipLine.curveTo(boatFront.x,boatFront.y);
-        shipLine.curveTo(boatMiddleLeft.x,boatMiddleLeft.y);
-        shipLine.curveTo(boatBehindLeft.x,boatBehindLeft.y);
 
-        shipLine.close();
-        shipLine.setFilled(true); //fill the outline and draw it
-        shipLine.setFillColor(ofColor(74, 62, 14));
-        shipLine.draw();
+void swarmBoid::drawBoat() {// draw the boat
+    ofVec2f temp = vel;
+    ofSetColor(74, 62, 14);
+    ofPath shipLine;
+    ofVec2f boatFront = pos + (20 * temp.normalize());  //calculate front of the boat
+    ofVec2f boatBehind = pos - (20 * temp.normalize());  //calculate behind of the boat
+    ofVec2f boatBehindLeft = boatBehind + (10 * temp.getRotated(-90).normalize());  // calculate behind left and right respectively
+    ofVec2f boatBehindRight = boatBehind + (10 * temp.getRotated(90).normalize());
+    ofVec2f boatMiddleLeft = pos + (10 * temp.getRotated(-90).normalize());  // calculate middle left and right respectively
+    ofVec2f boatMiddleRight = pos + (10 * temp.getRotated(90).normalize());
 
-        //ofDrawArrow(pos-(10*temp.normalize()), pos+(20*temp.normalize()),10);
-        //ofDrawArrow(pos+(10*temp.normalize()), pos-(20*temp.normalize()),10);
-    }
+    //make a curve to outline the boat
+    shipLine.curveTo(boatBehind.x, boatBehind.y);
+    shipLine.curveTo(boatBehindRight.x, boatBehindRight.y);
+    shipLine.curveTo(boatMiddleRight.x, boatMiddleRight.y);
+    shipLine.curveTo(boatFront.x, boatFront.y);
+    shipLine.curveTo(boatMiddleLeft.x, boatMiddleLeft.y);
+    shipLine.curveTo(boatBehindLeft.x, boatBehindLeft.y);
+
+    shipLine.close();
+    shipLine.setFilled(true); //fill the outline and draw it
+    shipLine.setFillColor(ofColor(74, 62, 14));
+    shipLine.draw();
+    ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
+
+    //ofDrawArrow(pos-(10*temp.normalize()), pos+(20*temp.normalize()),10);
+    //ofDrawArrow(pos+(10*temp.normalize()), pos-(20*temp.normalize()),10);
+}
+
+void swarmBoid::drawFish(){
     ofSetColor(c);
     if(mode==1) { // fish
+        ofVec2f temp = vel;
         ofVec2f triBehind = pos - (10*temp.normalize());  //calculate behind of the tail
         ofVec2f triBehindLeft = triBehind - (8*temp.getRotated(90).normalize());  // calculate left and right respectively
         ofVec2f triBehindRight = triBehind + (8*temp.getRotated(90).normalize());
         ofTriangle(pos.x,pos.y,triBehindLeft.x,triBehindLeft.y,triBehindRight.x,triBehindRight.y);  // draw triangle on calculated vectors
+        ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
     }
-    
-
-    ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
-    
-    
 }
 
 //====================================================================
