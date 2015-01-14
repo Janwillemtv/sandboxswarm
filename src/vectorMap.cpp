@@ -92,7 +92,6 @@ void vectorMap::draw(){
 
 //================================================
 vector <ofVec4f> * vectorMap::vectorGrid(){//return the pointers
-    
     return  &vec;
 }
 //================================================
