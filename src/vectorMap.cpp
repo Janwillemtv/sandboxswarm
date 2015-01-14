@@ -56,6 +56,7 @@ void vectorMap::set(int rows, int columns){
 }
 //-------------------------------------------------
 void vectorMap::update(){
+    if(kinect.isConnected()){
     kinect.update();
     if(kinect.isFrameNew()) {
         colorImg.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
@@ -174,7 +175,7 @@ void vectorMap::update(){
     for(int j = 0; j<trees.size(); j++){
         trees[j].update();
     }
-
+    }
 }
 //-----------------------------------------------------------
 void vectorMap::draw(){
