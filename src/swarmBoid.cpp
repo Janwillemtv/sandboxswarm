@@ -7,7 +7,7 @@
 //
 #include "ofMain.h"
 #include "swarmBoid.h"
-
+#include "global.h"
 
 ofVec2f mouse;
 swarmBoid::swarmBoid(){
@@ -27,7 +27,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
         neighborRepel = 0.15;
         matchVelocity = 0.125;
         objectRepel = 0.1;
-        mapWeight = 0.05;
+        mapWeight = 0.01;
         average = 1;
         c.set(255,204,0);
         drawShip = false;
@@ -45,7 +45,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
         neighborRepel = 0.15;
         matchVelocity = 0.125;
         objectRepel = 0.1;
-        mapWeight = -0.06;
+        mapWeight = -0.04;
         average = 1;
         c.set(143,46,73);
         drawShip = true;
@@ -148,8 +148,8 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
     //----------------------------------------
     
    
-    float w = ((640.0)-(44*1.5))/ofGetWidth();
-    float h = ((480.0)-50)/ofGetHeight();
+    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();
+    float h = ((480.0)-borderTop)/ofGetHeight();
     
     for(int i = 0; i < contourPointer->nBlobs; i++) {
         ofxCvBlob blob = contourPointer->blobs.at(i);
@@ -158,17 +158,19 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
         
         line.addVertices(blob.pts);
         line.close();
-        if(line.inside((int)((pos.x*w)+(0.5*44)),(int)((pos.y*h)))){
+        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){
             if(mode==1){
             float temp = vel.length();
-            vel = -1*(blob.centroid-pos);
+            vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
             vel.normalize();
-            vel *= temp;
+            vel *= -10;
+            c.set(255,0,0);
             }
             if(mode == 2) drawShip = false;
             break;
         }else{
             if(mode == 2) drawShip = true;
+            if(mode==1)c.set(255,204,0);
         }
     }
     

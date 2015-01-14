@@ -11,11 +11,11 @@
 growIland::growIland(ofVec2f position){
     finalSize = (int)(ofRandom(10.0,20.0));
     pos = position;
-    growFac = (int)(ofRandom(1.0,5.0));
+    growFac = (int)(ofRandom(1.0,2.0));
     randomTime = (int)ofRandom(500);
     size = 0;
     erase = 0;
-    c.set(ofRandom(0.0,50.0),ofRandom(150.0,200.0),ofRandom(30.0,80.0));
+    c.set(ofRandom(0.0,50.0),ofRandom(120.0,200.0),ofRandom(30.0,80.0));
     
 }
 

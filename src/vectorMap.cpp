@@ -35,7 +35,6 @@ void vectorMap::set(int rows, int columns){
     kinect.open();
     colorImg.allocate(kinect.width, kinect.height);
     grayImage.allocate(kinect.width, kinect.height);
-
     
     colorImg.setROI(borderSide/2, borderTop, colorImg.getWidth()-borderSide, colorImg.getHeight());
     grayImage.setROI(borderSide/2, borderTop, grayImage.getWidth()-borderSide, grayImage.getHeight());
@@ -135,7 +134,9 @@ void vectorMap::update(){
         ofVec2f pos;
         pos.set((int)ofRandom(0.0,ofGetWidth()),(int)ofRandom(0.0,ofGetHeight()));
 
-    
+        if(contour.nBlobs == 0  && trees.size()>0){
+            if(ofGetElapsedTimeMillis() - trees[0].erase) trees.clear();
+        }
         for(int i = 0; i < contour.nBlobs; i++) {
             ofxCvBlob blob = contour.blobs.at(i);
             // do something fun with blob
@@ -144,7 +145,7 @@ void vectorMap::update(){
             
             line.addVertices(blob.pts);
             line.close();
-            if(line.inside((int)((pos.x*w)+(0.5*44)),(int)((pos.y*h)))){
+            if(line.inside(floor(((pos.x)*w)+(0.5*borderSide)),floor((pos.y*h)))){
                 trees.push_back(growIland(pos));
                   
             }
@@ -152,7 +153,7 @@ void vectorMap::update(){
             for (auto it = trees.begin(); it != trees.end();){
              
             
-                if(line.inside((int)((it->pos.x*w)+(0.5*44)),(int)((it->pos.y*h)))){
+                if(line.inside(floor((it->pos.x*w)+(0.5*borderSide)),floor((it->pos.y*h)))){
                     it->setNull(ofGetElapsedTimeMillis());
     
                     it++;
@@ -178,12 +179,16 @@ void vectorMap::update(){
 }
 //-----------------------------------------------------------
 void vectorMap::draw(){
-    if (calibrate) colorImg.drawROI(0,0,ofGetWidth(),ofGetHeight());
+    
     ofSetColor(20,20,200); //set blue for seacolor
    grayImage.drawROI(0, 0, ofGetWidth(), ofGetHeight());
     
     for(int j = 0; j<trees.size(); j++){ // draw the trees
         trees[j].draw();
+    }
+    if (calibrate) {
+        ofSetColor(255);
+        colorImg.drawROI(0,0,ofGetWidth(),ofGetHeight());
     }
     if(drawVector){
     ofSetColor(255, 0, 0);//set color for vectors
@@ -196,9 +201,10 @@ void vectorMap::draw(){
         
     }
     }
-  
+    
     
     if(thresh){
+        ofSetColor(255);
     stringstream reportStream;//calbration information
     reportStream
     << "set near threshold " << nearThreshold << " (press: + -)" << endl

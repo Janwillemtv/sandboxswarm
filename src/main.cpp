@@ -4,7 +4,7 @@
 #include "global.h"
 
 const int borderTop = 50;
-const int borderSide = 44;
+const int borderSide = 25;
 
 //========================================================================
 int main( ){
