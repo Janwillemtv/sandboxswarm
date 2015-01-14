@@ -39,9 +39,9 @@ class vectorMap{
     vector<ofPolyline> line;
     vector<growIland> trees;
     
-    Boolean drawVector;
-    Boolean calibrate;
-    Boolean thresh;
+    bool drawVector;
+    bool calibrate;
+    bool thresh;
     int row, column;
     float weight;
     float diffx, diffy;

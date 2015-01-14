@@ -78,7 +78,7 @@ void vectorMap::update(){
         
         grayImage.flagImageChanged();
 
-        contour.findContours(grayImage, 30, 150000, 10, false);
+        contour.findContours(grayImage, 200, 150000, 10, false);
         
         for(int i = 0; i < numPixels; i++) {
             if(pix[i] ==255) {
@@ -180,7 +180,7 @@ void vectorMap::update(){
 //-----------------------------------------------------------
 void vectorMap::draw(){
     
-    ofSetColor(20,20,200); //set blue for seacolor
+    ofSetColor(28,91,160); //set blue for seacolor
    grayImage.drawROI(0, 0, ofGetWidth(), ofGetHeight());
     
     for(int j = 0; j<trees.size(); j++){ // draw the trees

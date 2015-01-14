@@ -27,7 +27,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
         neighborRepel = 0.15;
         matchVelocity = 0.125;
         objectRepel = 0.1;
-        mapWeight = 0.01;
+        mapWeight = 1.7;
         average = 1;
         c.set(255,204,0);
         drawShip = false;
@@ -45,7 +45,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
         neighborRepel = 0.15;
         matchVelocity = 0.125;
         objectRepel = 0.1;
-        mapWeight = -0.04;
+        mapWeight = -0.03;
         average = 1;
         c.set(143,46,73);
         drawShip = true;
@@ -92,26 +92,26 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
         }else{
             int closestId = (round(b[p].pos.x/(ofGetWidth()/20))-1)+((round(b[p].pos.y/(ofGetHeight()/15))-1)*20);
             ofVec2f temp;
-            for(int u = 0; u<20; u++){
-                if(closestId != 0+(u*15) || closestId !=20+(u*15) || closestId != u || closestId != (14*20)+u ){
-                    for(int k = -average; k<=average; k++){
-                        temp.x += (vectorPos[closestId+k].z);
-                        temp.y +=  (vectorPos[(closestId+k)+20].w);
-                    }
-                    
-                    
-                    
-                    v5.x += (temp.x/average)*mapWeight;
-                    v5.y += (temp.y/average)*mapWeight;
+//            for(int u = 0; u<20; u++){
+            //    if(closestId != 0+(u*15) || closestId !=20+(u*15) || closestId != u || closestId != (14*20)+u ){
+//                    for(int k = -average; k<=average; k++){
+//                        temp.x += (vectorPos[closestId+k].z);
+//                        temp.y +=  (vectorPos[(closestId+k)+20].w);
+//                    }
+//                    
+//                    
+//                    
+//                    v5.x += (temp.x/average)*mapWeight;
+//                    v5.y += (temp.y/average)*mapWeight;
+            
+             //   }else{
+                    v5.x += (vectorPos[closestId].z)*mapWeight;
+                    v5.y += (vectorPos[closestId].w)*mapWeight;
                 
-                }else{
-                    v5.x += (vectorPos[closestId].z);
-                    v5.y += (vectorPos[closestId].w);
-                
-                }
+             //   }
             
                 
-            }
+         //   }
           
             
             
