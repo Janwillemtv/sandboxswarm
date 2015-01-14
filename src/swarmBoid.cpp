@@ -45,7 +45,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
         neighborRepel = 0.15;
         matchVelocity = 0.125;
         objectRepel = 0.1;
-        mapWeight = -0.03;
+        mapWeight = -1;
         average = 1;
         c.set(143,46,73);
         drawShip = true;
@@ -90,30 +90,12 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
             }
             
         }else{
-            int closestId = (round(b[p].pos.x/(ofGetWidth()/20))-1)+((round(b[p].pos.y/(ofGetHeight()/15))-1)*20);
+            int closestId = (round(b[p].pos.x/(ofGetWidth()/20))-1)+((round(b[p].pos.y/(ofGetHeight()/15))-1)*20);// the the id of the closest vector in vector map
             ofVec2f temp;
-//            for(int u = 0; u<20; u++){
-            //    if(closestId != 0+(u*15) || closestId !=20+(u*15) || closestId != u || closestId != (14*20)+u ){
-//                    for(int k = -average; k<=average; k++){
-//                        temp.x += (vectorPos[closestId+k].z);
-//                        temp.y +=  (vectorPos[(closestId+k)+20].w);
-//                    }
-//                    
-//                    
-//                    
-//                    v5.x += (temp.x/average)*mapWeight;
-//                    v5.y += (temp.y/average)*mapWeight;
-            
-             //   }else{
-                    v5.x += (vectorPos[closestId].z)*mapWeight;
+
+                    v5.x += (vectorPos[closestId].z)*mapWeight;// add the vectormap-vector
                     v5.y += (vectorPos[closestId].w)*mapWeight;
-                
-             //   }
-            
-                
-         //   }
-          
-            
+         
             
             if(distance(mouse,b[p].pos)<50){ // if a object gets close the objectrepel vector gets increased
                     v5 += (b[p].pos - mouse)*10;
@@ -145,31 +127,31 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
     }
     
     pos += vel; // update position
-    //----------------------------------------
+    //----------------------------------------//blob-colision
     
    
-    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();
+    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
     float h = ((480.0)-borderTop)/ofGetHeight();
     
-    for(int i = 0; i < contourPointer->nBlobs; i++) {
+    for(int i = 0; i < contourPointer->nBlobs; i++) {// check for every blob found
         ofxCvBlob blob = contourPointer->blobs.at(i);
         // do something fun with blob
         ofPolyline line;
         
         line.addVertices(blob.pts);
         line.close();
-        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){
+        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
             if(mode==1){
             float temp = vel.length();
             vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
-            vel.normalize();
+            vel.normalize();// set maximal velocity away from blob
             vel *= -10;
             c.set(255,0,0);
             }
-            if(mode == 2) drawShip = false;
+            if(mode == 2) drawShip = false;// if on land dont draw a ship
             break;
         }else{
-            if(mode == 2) drawShip = true;
+            if(mode == 2) drawShip = true;// if on water draw ship
             if(mode==1)c.set(255,204,0);
         }
     }
@@ -203,7 +185,7 @@ void swarmBoid::draw(){
    
        
             
-    if(drawShip){
+    if(drawShip){// draw the boat
     ofSetColor(74, 62, 14);
     ofVec2f temp = vel;
     ofDrawArrow(pos-(10*temp.normalize()), pos+(20*temp.normalize()),10);

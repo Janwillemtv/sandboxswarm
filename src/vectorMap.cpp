@@ -20,7 +20,6 @@ vectorMap::vectorMap(){
 }
 //-------------------------------------------------
 void vectorMap::set(int rows, int columns){
-    //ofSetLogLevel(OF_LOG_VERBOSE);
     nearThreshold = 250;
     farThreshold = 243;
     
@@ -130,7 +129,7 @@ void vectorMap::update(){
     
     //============================================
    
-    if(trees.size()<500){
+   
         ofVec2f pos;
         pos.set((int)ofRandom(0.0,ofGetWidth()),(int)ofRandom(0.0,ofGetHeight()));
 
@@ -146,7 +145,7 @@ void vectorMap::update(){
             line.addVertices(blob.pts);
             line.close();
             if(line.inside(floor(((pos.x)*w)+(0.5*borderSide)),floor((pos.y*h)))){
-                trees.push_back(growIland(pos));
+               if(trees.size()<1000)  trees.push_back(growIland(pos));
                   
             }
 
@@ -166,7 +165,7 @@ void vectorMap::update(){
        
             }
             
-        }
+        
     }
     
     //========================================================
