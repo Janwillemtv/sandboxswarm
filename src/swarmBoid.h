@@ -36,7 +36,7 @@ class swarmBoid{
     int mode;
     float scale;
     ofColor c;
-    Boolean drawShip;
+    bool drawShip;
     
     ofVec2f v1, v2, v3, v4, v5;
     
