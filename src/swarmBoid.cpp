@@ -16,10 +16,12 @@ swarmBoid::swarmBoid(){
 
 
 //------------------------------------------------------------------
-void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * contour){
+void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * contour, vector<swarmBoid*>  swarm, int self){
     mode = modus;
     contourPointer = contour;
     mapPointer = map;
+    swarmPointer = swarm;
+    itSelf = self;
     if(mode==1){ // fish
         maxSpeed = 7;           //swarming weighfactors
         moveCenter = 0.01;
@@ -74,42 +76,18 @@ void swarmBoid::update(vector<swarmBoid> b, int p){
         
         if(i !=p) { // exclude the boid that is currently updating
            
-            dist = distance(b[i].pos,b[p].pos);// calculate distance from selected boid to checking boid
+            calcSwarm(i);//calculate the swarming vectors
             
-            if(dist<100){ // boids check in 100 units for other boids
-                
-                if(dist<30){ // if its too close the repel vector gets increased
-                    v2 -= (b[i].pos - b[p].pos);
-                }else{ // if its too far away the attract vector gets increased
-                    v4 += (b[i].pos - b[p].pos);
-                }
-               
-                v1 += b[i].pos; // movement towards center is the avarge position
-                v3 += b[i].vel; // mathing velocity is the avarage velocity
-                numberNeighbours++; // to calculate a avarage you need the number of entries
-            }
-            
-        }else{
-            int closestId = (round(b[p].pos.x/(ofGetWidth()/20))-1)+((round(b[p].pos.y/(ofGetHeight()/15))-1)*20);// the the id of the closest vector in vector map
-            ofVec2f temp;
-
-                    v5.x += (vectorPos[closestId].z)*mapWeight;// add the vectormap-vector
-                    v5.y += (vectorPos[closestId].w)*mapWeight;
-         
-            
-            if(distance(mouse,b[p].pos)<50){ // if a object gets close the objectrepel vector gets increased
-                    v5 += (b[p].pos - mouse)*10;
-            }
-        
         }
         
             
         
     }
-
     v1 = v1/(numberNeighbours);// calculate avarage
     v1 = (v1 - b[p].pos);  // calculate vector
     v3 = v3/(numberNeighbours); // calculate avarage
+
+  
     
     if(numberNeighbours != 0) {
         vel+= (moveCenter * v1) + (neighborRepel* v2) + (matchVelocity*v3)+ (neighborAtract*v4)+ (objectRepel* v5);// add all the vectors with their weightfactors
@@ -210,6 +188,40 @@ float swarmBoid::distance(ofVec2f v1, ofVec2f v2){//calculates absolute distance
     
     return abs(v1.distance(v2));
     
+}
+
+void swarmBoid::calcSwarm(int i){
+   
+    dist = distance(swarmPointer[i]->pos,swarmPointer[itSelf]->pos);// calculate distance from selected boid to checking boid
+    
+    if(dist<100){ // boids check in 100 units for other boids
+        
+        if(dist<30){ // if its too close the repel vector gets increased
+            v2 -= (swarmPointer[i]->pos - swarmPointer[itSelf]->pos);
+        }else{ // if its too far away the attract vector gets increased
+            v4 += (swarmPointer[i]->pos - swarmPointer[itSelf]->pos);
+        }
+        
+        v1 += swarmPointer[i]->pos; // movement towards center is the avarge position
+        v3 += swarmPointer[i]->vel; // mathing velocity is the avarage velocity
+        numberNeighbours++; // to calculate a avarage you need the number of entries
+    }
+    
+    if(distance(mouse,swarmPointer[itSelf]->pos)<50){ // if a object gets close the objectrepel vector gets increased
+        v5 += (swarmPointer[itSelf]->pos - mouse)*10;
+    }
+    
+  
+
+}
+
+void swarmBoid::getMapVector(int i){
+    int closestId = (round(swarmPointer[itSelf]->pos.x/(ofGetWidth()/20))-1)+((round(swarmPointer[itSelf]->pos.y/(ofGetHeight()/15))-1)*20);// the the id of the closest vector in vector map
+    ofVec2f temp;
+    
+    v5.x += (vectorPos[closestId].z)*mapWeight;// add the vectormap-vector
+    v5.y += (vectorPos[closestId].w)*mapWeight;
+
 }
 
 void swarmBoid::mouseUpdate(int x, int y){//update mouse position

@@ -20,17 +20,21 @@ class swarmBoid{
     swarmBoid();
     
     vector <ofVec4f> * mapPointer;
+    vector<swarmBoid*> swarmPointer;
     vector<ofVec4f> vectorPos;
     
     ofxCvContourFinder * contourPointer;
     
+    
     ofPoint pos;
     ofPoint vel;
     
-    void set(int mode, vector<ofVec4f> * mapPointer, ofxCvContourFinder * contourPointer);
+    void set(int mode, vector<ofVec4f> * mapPointer, ofxCvContourFinder * contourPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
     void update(vector<swarmBoid> b, int p);
     void draw();
     float distance(ofVec2f v1, ofVec2f v2);
+    void calcSwarm(int i);
+    void getMapVector(int i);
     void mouseUpdate(int x, int y);
     
     int mode;
@@ -45,7 +49,7 @@ class swarmBoid{
     ofPolyline line;
     ofMesh traingle;
     
-    
+    int itSelf;
     float maxSpeed;
     float moveCenter;
     float neighborAtract;
