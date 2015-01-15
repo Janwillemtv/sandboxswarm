@@ -4,6 +4,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofSetLogLevel(OF_LOG_VERBOSE);
+    ofSetLogLevel("ofThread", OF_LOG_WARNING);
     ofSetVerticalSync(true);
     map.set();
 

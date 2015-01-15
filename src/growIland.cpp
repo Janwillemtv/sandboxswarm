@@ -14,7 +14,7 @@ growIland::growIland(ofVec2f position){
     growFac = (int)(ofRandom(1.0,2.0));
     size = 0;
     erase = 0;
-    c.set(ofRandom(220.0,255.0),ofRandom(220,255.0),ofRandom(220.0,255.0));
+    c.set(ofRandom(15.0,50.0),ofRandom(200,255.0),ofRandom(15.0,50.0));
     
 }
 
