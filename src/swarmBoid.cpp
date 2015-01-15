@@ -16,9 +16,8 @@ swarmBoid::swarmBoid(){
 
 
 //------------------------------------------------------------------
-void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * contour, vector<swarmBoid*>  swarm, int self){
+void swarmBoid::set(int modus, vectorMap * map, vector<swarmBoid*>  swarm, int self){
     mode = modus;
-    contourPointer = contour;
     mapPointer = map;
     swarmPointer = swarm;
     itSelf = self;
@@ -64,7 +63,7 @@ void swarmBoid::set(int modus, vector<ofVec4f> * map, ofxCvContourFinder * conto
 
 //====================================================================
 void swarmBoid::update(vector<swarmBoid> b, int p){
-    vectorPos = *mapPointer;
+    //vectorPos = *mapPointer;
     center.set(0,0); // the vector towards the center of the swarm
     nRepel.set(0,0); // the vector to repel from nearby boids
     match.set(0,0); // the vector to match velocity of nearby boids
@@ -156,8 +155,8 @@ void swarmBoid::calcSwarm(int i){
 //============================================================================
 void swarmBoid::getMapVector(){
     int closestId = (round(swarmPointer[itSelf]->pos.x/(ofGetWidth()/column))-1)+((round(swarmPointer[itSelf]->pos.y/(ofGetHeight()/row))-1)*row);// the the id of the closest vector in vector map
-    oRepel.x += (vectorPos[closestId].z)*mapWeight;// add the vectormap-vector
-    oRepel.y += (vectorPos[closestId].w)*mapWeight;
+    oRepel.x += (mapPointer->vec[closestId].z)*mapWeight;// add the vectormap-vector
+    oRepel.y += (mapPointer->vec[closestId].w)*mapWeight;
 
 }
 //=============================================================================
@@ -166,8 +165,8 @@ void swarmBoid::calcColision(){
     float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
     float h = ((480.0)-borderTop)/ofGetHeight();
     
-    for(int i = 0; i < contourPointer->nBlobs; i++) {// check for every blob found
-        ofxCvBlob blob = contourPointer->blobs.at(i);
+    for(int i = 0; i < mapPointer->contour.nBlobs; i++) {// check for every blob found
+        ofxCvBlob blob = mapPointer->contour.blobs.at(i);
 
         ofPolyline line;
         
@@ -175,13 +174,17 @@ void swarmBoid::calcColision(){
         line.close();
         if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
             if(mode==1){
+                mapPointer->infect(pos, -5);
                 float temp = vel.length();
                 vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
                 vel.normalize();// set maximal velocity away from blob
                 vel *= -10;
                 c.set(255,0,0);
             }
-            if(mode == 2) drawShip = false;// if on land dont draw a ship
+            if(mode == 2) {
+                drawShip = false;// if on land dont draw a ship
+                if(ofGetElapsedTimeMillis()%10<2)    mapPointer->infect(pos, 3);
+            }
             break;
         }else{
             if(mode == 2) drawShip = true;// if on water draw ship

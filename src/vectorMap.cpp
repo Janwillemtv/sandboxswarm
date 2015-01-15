@@ -92,16 +92,6 @@ void vectorMap::draw(){
     }
 }
 
-
-//================================================
-vector <ofVec4f> * vectorMap::vectorGrid(){//return the adresses of variables to make pointers
-    return  &vec;
-}
-//================================================
-ofxCvContourFinder * vectorMap::contours(){
-    return &contour;
-}
-
 //================================================
 void vectorMap::reposition(){
     int rowCount = 1;
@@ -139,7 +129,6 @@ void vectorMap::getKinectImage(){
                     pix[i] = 0;
                 }
             }
-            
             
             grayImage.flagImageChanged();//say that the image is changed
             
@@ -244,6 +233,15 @@ void vectorMap::makeTrees(){
         
     }
 
+}
+//=================================================
+void vectorMap::infect(ofVec2f position, int influence){
+    for(int i = 0; i < trees.size(); i++){
+        float dist = abs(position.distance(trees[i].pos));
+        if(dist<=100){
+            trees[i].influence += influence;
+        }
+    }
 }
 //=================================================
 void vectorMap::close(){

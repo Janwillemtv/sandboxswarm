@@ -28,6 +28,8 @@ class growIland{
         int size;
         int finalSize;
         unsigned int erase;
+        int influence;
         ofColor c;
+        float red,green,blue;
 
 };
