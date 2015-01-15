@@ -146,7 +146,7 @@ void vectorMap::getKinectImage(){
             contour.findContours(grayImage, 200, 150000, 10, false);// find the contours in the image
            
             
-            for(int i = 0; i < numPixels; i++) {//set the sea and iland colors
+            for(int i = 0; i < numPixels; i++) {//set the sea and island colors
                 if(pix[i] ==255) {
                     col.setColor(i*3, ofColor(255));
                 } else {
@@ -165,7 +165,7 @@ void vectorMap::calcVectors(){
 
     int rowCount = 1;
     int columnCount = 1;
-    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();//translation factors
+    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();//translation factors for kinect
     float h = ((480.0)-borderTop)/ofGetHeight();
     
     for(int i = 0; i <vec.size(); i++){//calculate the vectors
