@@ -29,10 +29,10 @@
 
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup(){ //setup Open Framworks
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetLogLevel("ofThread", OF_LOG_WARNING);
-    ofSetVerticalSync(true);
+    ofSetVerticalSync(true);//verical sync to decrease screen tearing
     map.set();
 
     
@@ -89,7 +89,7 @@ void ofApp::keyPressed(int key){//keypresses for debug
             break;
         
         case 'v':
-            map.drawVector = !map.drawVector;
+            map.drawVector = !map.drawVector;// drawe vector map to show vector directions
             break;
         
         case 'c':
@@ -117,7 +117,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h)
 {
-    map.reposition();
+    map.reposition();// apply grid to resolution
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
