@@ -11,7 +11,7 @@
 
 
 
-vectorMap::vectorMap(){
+vectorMap::vectorMap(){//init vector map
     weight = 0.1;//vector map values
     times = 5;
     max = 90;
@@ -20,29 +20,32 @@ vectorMap::vectorMap(){
 }
 //-------------------------------------------------
 void vectorMap::set(){
-    nearThreshold = 250;//initail values
+    nearThreshold = 250;//initial values for kinect-distance-thresholds
     farThreshold = 243;
     
     line.assign((row*column),ofPolyline());
     
-    kinect.setRegistration(true);
+    kinect.setRegistration(true);//enable kinect
     kinect.init();
     //kinect.init(false, false); // disable video image (faster fps)
     
     kinect.open();
-    colorImg.allocate(kinect.width, kinect.height);
-    grayImage.allocate(kinect.width, kinect.height);
-    
+    //
+    colorImg.allocate(kinect.width, kinect.height);//video feed
+    grayImage.allocate(kinect.width, kinect.height);//heightmap
+
+    //adjust for kinect its usable area
     colorImg.setROI(borderSide/2, borderTop, colorImg.getWidth()-borderSide, colorImg.getHeight());
     grayImage.setROI(borderSide/2, borderTop, grayImage.getWidth()-borderSide, grayImage.getHeight());
-    
+
+    //assign four dimension vectors
     vec.assign((row*column),ofVec4f());
     reposition();
 
 }
 //-------------------------------------------------
 void vectorMap::update(){
-    
+    //get kinect data en update the map
     getKinectImage();
     calcVectors();
     makeTrees();
@@ -54,6 +57,7 @@ void vectorMap::update(){
 }
 //-----------------------------------------------------------
 void vectorMap::draw(){
+    //draw the vector map(black and blue)
     
     ofSetColor(28,91,160); //set blue for seacolor
    grayImage.drawROI(0, 0, ofGetWidth(), ofGetHeight());
@@ -61,7 +65,7 @@ void vectorMap::draw(){
     for(int j = 0; j<trees.size(); j++){ // draw the trees
         trees[j].draw();
     }
-    if (calibrate) {
+    if (calibrate) {//turn on camera for better calibration, including all colors
         ofSetColor(255);
         colorImg.drawROI(0,0,ofGetWidth(),ofGetHeight());
     }
@@ -79,7 +83,7 @@ void vectorMap::draw(){
     
     
     if(thresh){
-        ofSetColor(255);
+        ofSetColor(255);//black for areas that are over the threshold
     stringstream reportStream;//calbration information
     reportStream
     << "set near threshold " << nearThreshold << " (press: + -)" << endl

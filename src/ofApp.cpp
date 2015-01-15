@@ -65,7 +65,7 @@ void ofApp::keyPressed(int key){//keypresses for debug
             break;
         
         case 'c':
-            map.calibrate = !map.calibrate;
+            map.calibrate = !map.calibrate;//turn on camera for better calibration
             break;
            
         case 't':
