@@ -32,6 +32,8 @@ class vectorMap{
     ofxKinect kinect;
     
     ofxCvColorImage colorImg;
+    ofImage seaImg;
+    ofPixels col;
     ofxCvGrayscaleImage grayImage; // grayscale depth image
     ofxCvContourFinder contour;
     
@@ -44,10 +46,9 @@ class vectorMap{
     bool drawVector;
     bool calibrate;
     bool thresh;
-  //  int row, column;
+    ofColor seaColor;
     float weight;
     float diffx, diffy;
-    int times;
     float xAvarage;
     float yAvarage;
     float max, min;
