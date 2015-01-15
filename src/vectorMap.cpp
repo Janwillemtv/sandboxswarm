@@ -3,7 +3,7 @@
 //  emptyExample
 //
 //  Created by Janwillem te Voortwis on 06/01/15.
-//
+//  Improved by Raoul Fasel
 //
 #include "ofMain.h"
 #include "vectorMap.h"
@@ -24,20 +24,21 @@ void vectorMap::set(){
     farThreshold = 243;
     
     line.assign((row*column),ofPolyline());
-    
+    //init kinect
     kinect.setRegistration(true);
     kinect.init();
     
     kinect.open();
-    colorImg.allocate(kinect.width, kinect.height);// reserve space for the images
-    grayImage.allocate(kinect.width, kinect.height);
+    // reserve space for the images
+    colorImg.allocate(kinect.width, kinect.height); //image for camera
+    grayImage.allocate(kinect.width, kinect.height);// image for grayscale heightmap
     seaImg.allocate(kinect.width, kinect.height,OF_IMAGE_COLOR);
     col.allocate(kinect.width, kinect.height,OF_PIXELS_RGB);
     
     colorImg.setROI(borderSide/2, borderTop, colorImg.getWidth()-borderSide, colorImg.getHeight());
     grayImage.setROI(borderSide/2, borderTop, grayImage.getWidth()-borderSide, grayImage.getHeight());// we use ROI because bad kinect
     
-    vec.assign((row*column),ofVec4f());
+    vec.assign((row*column),ofVec4f());//empty array of 4d vectors for the height difference vectors
     reposition();
 
 }
@@ -81,11 +82,11 @@ void vectorMap::draw(){
     }
     //---------------------------------------------------------
     if(thresh){
-        ofSetColor(255);
+        ofSetColor(255);// alter threshold variable via keyboard
     stringstream reportStream;//calbration information
     reportStream
-    << "set near threshold " << nearThreshold << " (press: + -)" << endl
-    << "set far threshold " << farThreshold << " (press: < >)"<<endl
+    << "set near threshold " << nearThreshold << " (press: + -)" << endl// for objects close to kinect
+    << "set far threshold " << farThreshold << " (press: < >)"<<endl// for objects closte table
     <<    "num blobs found " << contour.nBlobs<<endl;
    ofDrawBitmapString(reportStream.str(), 20, 652);
     }
@@ -93,7 +94,7 @@ void vectorMap::draw(){
 
 
 //================================================
-vector <ofVec4f> * vectorMap::vectorGrid(){//return the pointers
+vector <ofVec4f> * vectorMap::vectorGrid(){//return the adresses of variables to make pointers
     return  &vec;
 }
 //================================================
@@ -130,7 +131,7 @@ void vectorMap::getKinectImage(){
             
             unsigned char * pix = grayImage.getPixels();
             
-            int numPixels = grayImage.getWidth() * grayImage.getHeight();// threshold the image
+            int numPixels = grayImage.getWidth() * grayImage.getHeight();// threshold the image from grayscale height data
             for(int i = 0; i < numPixels; i++) {
                 if(pix[i] < nearThreshold && pix[i] > farThreshold) {
                     pix[i] = 255;
@@ -145,7 +146,7 @@ void vectorMap::getKinectImage(){
             contour.findContours(grayImage, 200, 150000, 10, false);// find the contours in the image
            
             
-            for(int i = 0; i < numPixels; i++) {//set the sea and iland colors
+            for(int i = 0; i < numPixels; i++) {//set the sea and island colors
                 if(pix[i] ==255) {
                     col.setColor(i*3, ofColor(255));
                 } else {
@@ -164,7 +165,7 @@ void vectorMap::calcVectors(){
 
     int rowCount = 1;
     int columnCount = 1;
-    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();//translation factors
+    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();//translation factors for kinect
     float h = ((480.0)-borderTop)/ofGetHeight();
     
     for(int i = 0; i <vec.size(); i++){//calculate the vectors

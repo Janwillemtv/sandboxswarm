@@ -1,17 +1,43 @@
+//#DESCRIPTION:///////////////////////////////////////////////////////////////
+//
+//  This code code runs a simulation of a oceanic world.
+//  Islands can be created by physical interaction with the sand.
+//  Flocking and island fauna is included.
+//
+//#DEPENDENCIES://////////////////////////////////////////////////////////////
+//
+//  Microsoft Kinect
+//  Table full of Sand
+//  Beamer
+//
+//#LEGAL NOTE://///////////////////////////////////////////////////////////////
+//
+//  Some Kinect routines are based on the OPENFRAMEWORKS Ofxkinect examples.
+//
+//#CREDITS:////////////////////////////////////////////////////////////////////
+//
+//  Janwillem Te Voortwis
+//  Raoul Fasel
+//
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+
 #include "ofApp.h"
 
 
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup(){ //setup Open Framworks
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetLogLevel("ofThread", OF_LOG_WARNING);
-    ofSetVerticalSync(true);
+    ofSetVerticalSync(true);//verical sync to decrease screen tearing
     map.set();
 
     
     int num = 50;
-   
+    //init all objects
     fish.set(1,num,map.vectorGrid(),map.contours());
     people.set(2,10,map.vectorGrid(),map.contours());
     
@@ -19,25 +45,25 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update(){//update all the objects
     map.update();
     fish.update();
     people.update();
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw(){//draw all objects
     ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
     map.draw();
     fish.draw();
     people.draw();
     ofSetColor(255,0,0);
-    ofCircle(mouse.x, mouse.y, 15);
+    ofCircle(mouse.x, mouse.y, 15);//draw mouse blob that pushes all
    
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key){//keypresses for debug
     switch(key){
         case '>':
         case '.':
@@ -63,11 +89,11 @@ void ofApp::keyPressed(int key){
             break;
         
         case 'v':
-            map.drawVector = !map.drawVector;
+            map.drawVector = !map.drawVector;// drawe vector map to show vector directions
             break;
         
         case 'c':
-            map.calibrate = !map.calibrate;
+            map.calibrate = !map.calibrate;//turn on camera for better calibration
             break;
            
         case 't':
@@ -91,7 +117,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h)
 {
-    map.reposition();
+    map.reposition();// apply grid to resolution
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
