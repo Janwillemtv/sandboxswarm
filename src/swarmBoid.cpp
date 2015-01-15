@@ -231,7 +231,8 @@ void swarmBoid::drawBoat(){
     ofVec2f boatBehindRight = boatBehind + (10*temp.getRotated(90).normalize());
     ofVec2f boatMiddleLeft = boatMiddle + (10*temp.getRotated(-90).normalize());  // calculate middle left and right respectively
     ofVec2f boatMiddleRight = boatMiddle + (10*temp.getRotated(90).normalize());
-    
+
+    // turn all the points into curves
     shipLine.curveTo(boatBehind.x,boatBehind.y);
      shipLine.curveTo(boatBehindRight.x,boatBehindRight.y);
     shipLine.curveTo(boatMiddleRight.x,boatMiddleRight.y);
