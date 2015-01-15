@@ -3,7 +3,7 @@
 //  emptyExample
 //
 //  Created by Janwillem te Voortwis on 03/01/15.
-//
+//  Improved by Raoul Fasel
 //
 #include "ofMain.h"
 #include "swarmBoid.h"

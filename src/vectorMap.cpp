@@ -3,7 +3,7 @@
 //  emptyExample
 //
 //  Created by Janwillem te Voortwis on 06/01/15.
-//
+//  Improved by Raoul Fasel
 //
 #include "ofMain.h"
 #include "vectorMap.h"
