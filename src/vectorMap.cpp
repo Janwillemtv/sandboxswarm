@@ -24,20 +24,21 @@ void vectorMap::set(){
     farThreshold = 243;
     
     line.assign((row*column),ofPolyline());
-    
+    //init kinect
     kinect.setRegistration(true);
     kinect.init();
     
     kinect.open();
-    colorImg.allocate(kinect.width, kinect.height);// reserve space for the images
-    grayImage.allocate(kinect.width, kinect.height);
+    // reserve space for the images
+    colorImg.allocate(kinect.width, kinect.height); //image for camera
+    grayImage.allocate(kinect.width, kinect.height);// image for grayscale heightmap
     seaImg.allocate(kinect.width, kinect.height,OF_IMAGE_COLOR);
     col.allocate(kinect.width, kinect.height,OF_PIXELS_RGB);
     
     colorImg.setROI(borderSide/2, borderTop, colorImg.getWidth()-borderSide, colorImg.getHeight());
     grayImage.setROI(borderSide/2, borderTop, grayImage.getWidth()-borderSide, grayImage.getHeight());// we use ROI because bad kinect
     
-    vec.assign((row*column),ofVec4f());
+    vec.assign((row*column),ofVec4f());//empty array of 4d vectors for the height difference vectors
     reposition();
 
 }
@@ -81,11 +82,11 @@ void vectorMap::draw(){
     }
     //---------------------------------------------------------
     if(thresh){
-        ofSetColor(255);
+        ofSetColor(255);// alter threshold variable via keyboard
     stringstream reportStream;//calbration information
     reportStream
-    << "set near threshold " << nearThreshold << " (press: + -)" << endl
-    << "set far threshold " << farThreshold << " (press: < >)"<<endl
+    << "set near threshold " << nearThreshold << " (press: + -)" << endl// for objects close to kinect
+    << "set far threshold " << farThreshold << " (press: < >)"<<endl// for objects closte table
     <<    "num blobs found " << contour.nBlobs<<endl;
    ofDrawBitmapString(reportStream.str(), 20, 652);
     }
@@ -93,7 +94,7 @@ void vectorMap::draw(){
 
 
 //================================================
-vector <ofVec4f> * vectorMap::vectorGrid(){//return the pointers
+vector <ofVec4f> * vectorMap::vectorGrid(){//return the adresses of variables to make pointers
     return  &vec;
 }
 //================================================
@@ -130,7 +131,7 @@ void vectorMap::getKinectImage(){
             
             unsigned char * pix = grayImage.getPixels();
             
-            int numPixels = grayImage.getWidth() * grayImage.getHeight();// threshold the image
+            int numPixels = grayImage.getWidth() * grayImage.getHeight();// threshold the image from grayscale height data
             for(int i = 0; i < numPixels; i++) {
                 if(pix[i] < nearThreshold && pix[i] > farThreshold) {
                     pix[i] = 255;
