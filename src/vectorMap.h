@@ -26,9 +26,7 @@ class vectorMap{
     void getKinectImage();
     void calcVectors();
     void makeTrees();
-    vector<ofVec4f> * vectorGrid();
-    ofxCvContourFinder * contours();
-    
+    void infect(ofVec2f pos, int infuence);
     ofxKinect kinect;
     
     ofxCvColorImage colorImg;
@@ -42,6 +40,7 @@ class vectorMap{
     
     vector<ofPolyline> line;
     vector<growIland> trees;
+    vector<ofColor> ilandColors;
     
     bool drawVector;
     bool calibrate;

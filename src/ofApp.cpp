@@ -38,8 +38,8 @@ void ofApp::setup(){ //setup Open Framworks
     
     int num = 50;
     //init all objects
-    fish.set(1,num,map.vectorGrid(),map.contours());
-    people.set(2,10,map.vectorGrid(),map.contours());
+    fish.set(1,num,&map);
+    people.set(2,10,&map);
     
     
 }

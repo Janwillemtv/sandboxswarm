@@ -19,17 +19,16 @@ class swarmBoid{
     
     swarmBoid();
     
-    vector <ofVec4f> * mapPointer;
+    vectorMap * mapPointer;
     vector<swarmBoid*> swarmPointer;
     vector<ofVec4f> vectorPos;
     
-    ofxCvContourFinder * contourPointer;
     
     
     ofPoint pos;
     ofPoint vel;
     
-    void set(int mode, vector<ofVec4f> * mapPointer, ofxCvContourFinder * contourPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
+    void set(int mode, vectorMap * mapPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
     void update(vector<swarmBoid> b, int p);
     void draw();
     void drawBoat();

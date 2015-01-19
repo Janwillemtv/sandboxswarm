@@ -12,13 +12,13 @@ swarm::swarm(){
     
 }
 //------------------------------
-void swarm::set(int mode, int num,vector <ofVec4f> * mapPointer,ofxCvContourFinder * contourPointer){
+void swarm::set(int mode, int num,vectorMap * mapPointer){
     b.assign(num, swarmBoid()); // create vector of pointers
     for(int i = 0; i<b.size();i++){//pointer vector
         p.push_back(&b[i]);
     }
     for(unsigned int i = 0; i < b.size(); i++){ // set swarm
-        b[i].set(mode,mapPointer,contourPointer,p,i);
+        b[i].set(mode,mapPointer,p,i);
     }
 }
 
