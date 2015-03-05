@@ -17,9 +17,7 @@ vectorMap::vectorMap(){
     min = 7;
     drawVector = calibrate = thresh = false;
     seaColor =  ofColor(28,91,160);
-}
-//-------------------------------------------------
-void vectorMap::set(){
+    //=====================================================
     nearThreshold = 250;//initail values
     farThreshold = 243;
     
@@ -40,8 +38,8 @@ void vectorMap::set(){
     
     vec.assign((row*column),ofVec4f());//empty array of 4d vectors for the height difference vectors
     reposition();
-
 }
+
 //-------------------------------------------------
 void vectorMap::update(){
     

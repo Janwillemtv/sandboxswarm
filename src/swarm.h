@@ -21,6 +21,6 @@ class swarm{
         void draw();
         void mouseUpdate(int x, int y);
 
-        vector <swarmBoid> b;
+
         vector <swarmBoid*> p;
 };

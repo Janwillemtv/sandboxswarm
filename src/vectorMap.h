@@ -18,7 +18,6 @@ class vectorMap{
     public:
     vectorMap();
     vector<ofVec4f> vec;
-    void set();
     void update();
     void draw();
     void close();
