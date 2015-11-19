@@ -6,9 +6,9 @@
 //  Improved by Raoul Fasel
 //
 
-#include "growIland.h"
+#include "water.h"
 
-growIland::growIland(ofVec2f position){ // let land grow with fauna
+water::water(ofVec2f position){ // let land grow with fauna
     finalSize = (int)(ofRandom(10.0,20.0));
     pos = position;
     growFac = (int)(ofRandom(1.0,2.0));
@@ -22,17 +22,23 @@ growIland::growIland(ofVec2f position){ // let land grow with fauna
 }
 
 
-void growIland::update(){//update land
-   
+void water::update(){//update land
+    
     size += growFac;
     if(size>finalSize) size = finalSize;//check tree finished growing
 }
 
-void growIland::draw(){ //draw
+void water::draw(){ //draw
     ofSetColor(c);
     ofCircle(pos, size);
 }
 
-void growIland::setNull(unsigned int time){//resest land
+void water::setNull(unsigned int time){//resest land
     erase = time;
 }
+
+Boolean water::returnSize(){
+    if(finalSize == size) return true;
+    else return false;
+}
+

@@ -12,13 +12,15 @@
 #include "swarmBoid.h"
 #include "ofMain.h"
 #include "vectorMap.h"
+#include "water.h"
 
 class swarm{
     public:
-        swarm(int mode, int num,vectorMap * mapPointer);
+        swarm(int mode, int num,vectorMap * mapPointer, vector<water>* ripple);
         //void set(int mode, int num,vectorMap * mapPointer);
         void update();
         void draw();
+        void drawShadow();
         void mouseUpdate(int x, int y);
 
 

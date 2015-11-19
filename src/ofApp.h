@@ -4,6 +4,7 @@
 #include "swarmBoid.h"
 #include "swarm.h"
 #include "vectorMap.h"
+#include "water.h"
 
 
 class ofApp : public ofBaseApp{
@@ -24,6 +25,7 @@ class ofApp : public ofBaseApp{
     
         swarm * fish;
         swarm * people;
+        vector <water> ripples;
     
         vectorMap map;
 
