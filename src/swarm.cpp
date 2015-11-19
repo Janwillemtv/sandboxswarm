@@ -44,6 +44,11 @@ void swarm::draw(){
     }
 }
 
+void swarm::drawShadow(){
+    for(unsigned int i = 0; i < p.size(); i++){
+        p[i]->drawShadow();    //draw swarm
+    }
+}
 void swarm::mouseUpdate(int x, int y){
     p[0]->mouseUpdate(x,y);
 }

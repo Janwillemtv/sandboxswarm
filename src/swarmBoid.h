@@ -26,17 +26,22 @@ class swarmBoid{
     vector<swarmBoid*> swarmPointer;
     vector<ofVec4f> vectorPos;
     
+    //vector<water> ripple;
+    
+    unsigned long oldmillis;
     
     
     ofPoint pos;
     ofPoint vel;
     
     void set(vectorMap * mapPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
-    void update();
+    //void update();
     virtual void draw(){};
+    virtual void update(){};
+    virtual void drawShadow(){};
     float distance(ofVec2f v1, ofVec2f v2);
-    void calcSwarm(int i);
-    void calcColision();
+    void calcSwarm(int i, int j);
+    virtual void calcColision(){};
     void alterVector();
     void getMapVector();
     void mouseUpdate(int x, int y);
@@ -63,6 +68,8 @@ class swarmBoid{
     float mapWeight;
     int numberNeighbours;
     int average;
+    ofImage boat;
+    ofImage shadow;
 
 };
 
@@ -70,15 +77,21 @@ class fish : public swarmBoid{
     public:
         fish();
         void draw();
-
+        void drawShadow();
+        void update();
+        void calcColision();
+    
 
 };
 
 class people : public swarmBoid{
 public:
     people();
+    float offset;
     void draw();
-    
+    void drawShadow();
+    void update();
+    void calcColision();
     
 };
 #endif

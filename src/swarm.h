@@ -19,6 +19,7 @@ class swarm{
         //void set(int mode, int num,vectorMap * mapPointer);
         void update();
         void draw();
+        void drawShadow();
         void mouseUpdate(int x, int y);
 
         vector <swarmBoid> b;

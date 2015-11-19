@@ -53,8 +53,10 @@ void ofApp::update(){//update all the objects
 
 //--------------------------------------------------------------
 void ofApp::draw(){//draw all objects
-    ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
-    map.draw();
+    ofBackgroundGradient(ofColor(100,100,160), ofColor(40,40,100));
+    //map.draw();
+    people->drawShadow();
+    fish->drawShadow();
     fish->draw();
     people->draw();
     ofSetColor(255,0,0);

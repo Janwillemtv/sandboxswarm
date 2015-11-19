@@ -7,6 +7,8 @@
 //
 #include "swarmBoid.h"
 #include "global.h"
+#include <math.h>
+
 
 ofVec2f mouse;
 swarmBoid::swarmBoid(){
@@ -14,7 +16,7 @@ swarmBoid::swarmBoid(){
     pos.y = ofRandomHeight();
     vel.x = ofRandom(-3.9, 3.9);//random velocity
     vel.y = ofRandom(-3.9, 3.9);
-    maxSpeed = 5;
+    maxSpeed = 3;
 }
 
 
@@ -23,39 +25,46 @@ void swarmBoid::set(vectorMap * map, vector<swarmBoid*>  swarm, int self){
     mapPointer = map;
     swarmPointer = swarm;
     itSelf = self;
+    oldmillis = ofGetElapsedTimeMillis();
 }
 //===================================================================
 fish::fish() : swarmBoid(){
-    moveCenter = 0.01;//swarming weighfactors
-    neighborAtract = 0.001;
-    neighborRepel = 0.03;
-    matchVelocity = 0.01;
+    boat.loadImage("fish.png");
+    shadow.loadImage("fishshadow.png");
+    moveCenter = 0.00000;//swarming weighfactors
+    neighborAtract = 0.0001;
+    neighborRepel = 0.007;
+    matchVelocity = 0.04;
     objectRepel = 0.01;
     mapWeight = 1.7;
     average = 1;
-    c.set(ofRandom(230.0,255.0),ofRandom(200.0,210.0),ofRandom(0.0,10.0));
+    c.set(ofRandom(230.0,255.0),ofRandom(200.0,210.0),ofRandom(100.0,130.0));
     drawShip = false;
     scale = ofRandom(1.0, 1.5);//random scale
     
 }
-
+//===================================================================
 people::people() : swarmBoid(){
-    moveCenter = 0.007;//swarming weighfactors
-    neighborAtract = 0.001;
-    neighborRepel = 0.03;
-    matchVelocity = 0.007;
+    boat.loadImage("boat.png");
+    shadow.loadImage("boatshadow.png");
+    offset = ofRandom(0.0,1000.0);
+    
+    moveCenter = 0.00000;
+    neighborAtract = 0.0000;
+    neighborRepel = 0.0005;
+    matchVelocity = 0.00;
     objectRepel = 0.01;
     mapWeight = -2;
     average = 1;
     c.set(ofRandom(135.0,145.0),ofRandom(35.0,46.0),ofRandom(70.0,75.0));
     drawShip = true;
-    //================================================
     scale = ofRandom(2.0, 2.5);//random scale
 }
 
 //====================================================================
-void swarmBoid::update(){
+void fish::update(){
     //vectorPos = *mapPointer;
+    
     center.set(0,0); // the vector towards the center of the swarm
     nRepel.set(0,0); // the vector to repel from nearby boids
     match.set(0,0); // the vector to match velocity of nearby boids
@@ -65,7 +74,7 @@ void swarmBoid::update(){
 
     for(unsigned int i = 0; i < swarmPointer.size(); i++){ // check for every boid
         
-            calcSwarm(i);//calculate the swarming vectors
+            calcSwarm(i,20);//calculate the swarming vectors
         
     }
     center = center/(numberNeighbours);// calculate avarage
@@ -81,58 +90,145 @@ void swarmBoid::update(){
     
     pos += vel; // update position
     
-    calcColision();// calculate collision with ilands
+    //calcColision();// calculate collision with ilands
     alterVector();// alter the vectors (maxSpeed&Worldcollision)
  
 }
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+void people::update(){
+    nRepel.set(0,0); // the vector to repel from nearby boids
+    oRepel.set(0,0); // the vector to repel from objects
+    
+    for(unsigned int i = 0; i < swarmPointer.size(); i++){ // check for every boid
+        
+        calcSwarm(i,70);//calculate the swarming vectors
+        
+    }
+    
+    getMapVector();
+    
+    if(numberNeighbours != 0) {
+        vel+= (neighborRepel* nRepel) + (objectRepel* oRepel);// add all the vectors with their weightfactors
+    }
+    else vel+= 0.1 * oRepel; // if a boid has no neighbor it vectors center,2,3,4 have no effect
+    
+    //calcColision();// calculate collision with ilands
+    alterVector();
+    vel.normalize();
+    vel *= (sin((ofGetElapsedTimef()*3)+offset)+1.5);
+    pos += vel; // update position
+    
+    // alter the vectors (maxSpeed&Worldcollision)
+    
+//    
+//    if(!(ripple).empty()){
+//        
+//        for(int j = 0; j<(ripple).size(); j++){//update trees
+//            ripple[j].update();
+//        }
+//        
+//        
+//        
+//        for (auto it = ripple.end(); it != ripple.begin();){// check if the trees are still in a blob
+//            
+//            
+//            if(!(it)->returnSize()){
+//                it--;
+//            }else{
+//                it = ripple.erase(it);// if the timer exceeds one second the tree is removed
+//            }
+//            
+//        }
+//    }
+//    
+    
+    
+    
+//    
+//    if(ripple.size()<1000&& ofGetElapsedTimeMillis()-oldmillis>1000) {
+//        ripple.push_back(water(pos));// add a ripple
+//        oldmillis = ofGetElapsedTimeMillis();
+//        cout << "ripple" << endl;
+//    }
+
+}
 //====================================================================
 
 void fish::draw(){
-    ofSetColor(c);
-    ofVec2f temp = vel;
-    ofVec2f triBehind = pos - (10*temp.normalize());  //calculate behind of the tail
-    ofVec2f triBehindLeft = triBehind - (8*temp.getRotated(90).normalize());  // calculate left and right respectively
-    ofVec2f triBehindRight = triBehind + (8*temp.getRotated(90).normalize());
-    ofTriangle(pos.x,pos.y,triBehindLeft.x,triBehindLeft.y,triBehindRight.x,triBehindRight.y);  // draw triangle on calculated vectors
-    ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
-
+    double angle = atan2(vel.y,vel.x);
+    
+    glPushMatrix();
+    ofTranslate(pos.x,pos.y);
+    ofRotate(((angle/(2*PI))*360)+90);
+    ofSetColor(255);
+    ofEnableAlphaBlending();
+    boat.draw(-15,-15,30,30);
+    ofDisableAlphaBlending();
+    glPopMatrix();
 }
 
 void people::draw(){
     if(drawShip){
-        ofVec2f temp = vel;
-        ofVec2f temp2 = pos;
-        ofSetColor(74, 62, 14);
-        ofPath shipLine;
-        ofVec2f boatFront = pos + (30*temp.normalize());  //calculate front of the boat
-        ofVec2f boatBehind = pos - (20*temp.normalize());  //calculate behind of the boat
-        ofVec2f boatMiddle = pos + (7*temp.normalize());
-        ofVec2f boatBehindLeft = boatBehind - (10*temp.getRotated(90).normalize());  // calculate behind left and right respectively
-        ofVec2f boatBehindRight = boatBehind + (10*temp.getRotated(90).normalize());
-        ofVec2f boatMiddleLeft = boatMiddle + (10*temp.getRotated(-90).normalize());  // calculate middle left and right respectively
-        ofVec2f boatMiddleRight = boatMiddle + (10*temp.getRotated(90).normalize());
+
+        double angle = atan2(vel.y,vel.x);
         
-        // turn all the points into curves
-        shipLine.curveTo(boatBehind.x,boatBehind.y);
-        shipLine.curveTo(boatBehindRight.x,boatBehindRight.y);
-        shipLine.curveTo(boatMiddleRight.x,boatMiddleRight.y);
-        shipLine.curveTo(boatFront.x,boatFront.y);
-        shipLine.curveTo(boatMiddleLeft.x,boatMiddleLeft.y);
+        glPushMatrix();
+        ofTranslate(pos.x,pos.y);
+        ofRotate(((angle/(2*PI))*360)+180);
+        ofSetColor(255);
+        ofEnableAlphaBlending();
+        boat.draw(-30,-15,60,30);
+        ofDisableAlphaBlending();
         
-        shipLine.curveTo(boatBehindLeft.x,boatBehindLeft.y);
-        shipLine.curveTo(boatBehind.x,boatBehind.y);
+        glPushMatrix();
+        ofTranslate(0,10);
+        ofRotate(30*sin((ofGetElapsedTimef()*3)+offset+185));
+        ofSetColor(148,102,1);
+        ofSetLineWidth(3);
+        ofLine(0,0,0,30);
+        glPopMatrix();
         
-        shipLine.close();
-        shipLine.setFilled(true);
-        shipLine.setFillColor(ofColor(74, 62, 14));
-        shipLine.setStrokeWidth(2);
-        shipLine.setStrokeColor(ofColor(255,0,0));
-        shipLine.draw();
-    
+        glPushMatrix();
+        ofTranslate(0,-10);
+        ofRotate(30*sin((ofGetElapsedTimef()*3)+offset));
+        ofLine(0,0,0,-30);
+        glPopMatrix();
+        
+        glPopMatrix();
+
     }
     ofSetColor(c);
     ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
+}
+
+void fish::drawShadow(){
+    double angle = atan2(vel.y,vel.x);
+    
+    glPushMatrix();
+    ofTranslate(pos.x+5,pos.y+5);
+    ofRotate(((angle/(2*PI))*360)+90);
+    ofSetColor(255);
+    ofEnableAlphaBlending();
+    shadow.draw(-30,-15,60,30);
+    ofDisableAlphaBlending();
+    glPopMatrix();
+
+}
+
+void people::drawShadow(){
+    double angle = atan2(vel.y,vel.x);
+    
+    glPushMatrix();
+    ofTranslate(pos.x+15,pos.y+15);
+    ofRotate(((angle/(2*PI))*360)+180);
+    ofSetColor(255);
+    ofEnableAlphaBlending();
+    shadow.draw(-30,-15,60,30);
+    ofDisableAlphaBlending();
+    glPopMatrix();
+
+    
 }
 
 //====================================================================
@@ -142,16 +238,16 @@ float swarmBoid::distance(ofVec2f v1, ofVec2f v2){//calculates absolute distance
     
 }
 //====================================================================
-void swarmBoid::calcSwarm(int i){
+void swarmBoid::calcSwarm(int i, int repelDist){
    
     dist = distance(swarmPointer[i]->pos,swarmPointer[itSelf]->pos);// calculate distance from selected boid to checking boid
     
-    if(dist<70){ // boids check in 100 units for other boids
+    if(dist<100){ // boids check in 100 units for other boids
         
-        if(dist<30){ // if its too close the repel vector gets increased
-            nRepel -= (swarmPointer[i]->pos - swarmPointer[itSelf]->pos);
+        if(dist<repelDist){ // if its too close the repel vector gets increased
+            nRepel -= (swarmPointer[i]->pos - swarmPointer[itSelf]->pos)*0.35*(repelDist-dist);
         }else{ // if its too far away the attract vector gets increased
-            nAtract += (swarmPointer[i]->pos - swarmPointer[itSelf]->pos);
+            nAtract += (swarmPointer[i]->pos - swarmPointer[itSelf]->pos)*0.004*dist;
         }
         
         center += swarmPointer[i]->pos; // movement towards center is the avarge position
@@ -162,6 +258,22 @@ void swarmBoid::calcSwarm(int i){
         
         if(distance(mouse,swarmPointer[itSelf]->pos)<50){ // if a object gets close the objectrepel vector gets increased
             oRepel += (swarmPointer[itSelf]->pos - mouse)*4;
+        }
+        ofVec2f left = *new ofVec2f(0,swarmPointer[itSelf]->pos.y);
+        ofVec2f right = *new ofVec2f(ofGetWidth(),swarmPointer[itSelf]->pos.y);
+        ofVec2f up = *new ofVec2f(swarmPointer[itSelf]->pos.x,0);
+        ofVec2f down = *new ofVec2f(swarmPointer[itSelf]->pos.x,ofGetHeight());
+        if(swarmPointer[itSelf]->pos.x<100){
+            oRepel += (swarmPointer[itSelf]->pos-left)*0.01*(100-swarmPointer[itSelf]->pos.x);
+        }
+        if(swarmPointer[itSelf]->pos.x>ofGetWidth()-100){
+            oRepel += (swarmPointer[itSelf]->pos-right)*0.01*(swarmPointer[itSelf]->pos.x-(ofGetWidth()-100));
+        }
+        if(swarmPointer[itSelf]->pos.y<100){
+            oRepel += (swarmPointer[itSelf]->pos-up)*0.01*(100-swarmPointer[itSelf]->pos.y);
+        }
+        if(swarmPointer[itSelf]->pos.y>ofGetHeight()-100){
+            oRepel += (swarmPointer[itSelf]->pos-down)*0.01*(swarmPointer[itSelf]->pos.y-(ofGetHeight()-100));
         }
     
     }
@@ -176,7 +288,7 @@ void swarmBoid::getMapVector(){
 
 }
 //=============================================================================
-void swarmBoid::calcColision(){
+void fish::calcColision(){
     
     float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
     float h = ((480.0)-borderTop)/ofGetHeight();
@@ -188,23 +300,40 @@ void swarmBoid::calcColision(){
         
         line.addVertices(blob.pts);
         line.close();
-        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
-            if(mode==1){
+        if(line.inside(floor(((pos.x+2*vel.x)*w)+(0.5*borderSide)),(floor(((pos.y+2*vel.y)*h))))){// if the boid is in the blob
                 mapPointer->infect(pos, -5);
                 float temp = vel.length();
                 vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
                 vel.normalize();// set maximal velocity away from blob
                 vel *= -10;
                 c.set(255,0,0);
-            }
-            if(mode == 2) {
-                drawShip = false;// if on land dont draw a ship
-                if(ofGetElapsedTimeMillis()%10<2)    mapPointer->infect(pos, 3);
-            }
+            
             break;
         }else{
-            if(mode == 2) drawShip = true;// if on water draw ship
-            if(mode==1)c.set(255,204,0);
+            c.set(255,204,0);
+        }
+    }
+}
+//=============================================================================
+void people::calcColision(){
+    
+    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
+    float h = ((480.0)-borderTop)/ofGetHeight();
+    
+    for(int i = 0; i < mapPointer->contour.nBlobs; i++) {// check for every blob found
+        ofxCvBlob blob = mapPointer->contour.blobs.at(i);
+        
+        ofPolyline line;
+        
+        line.addVertices(blob.pts);
+        line.close();
+        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
+                drawShip = false;// if on land dont draw a ship
+                if(ofGetElapsedTimeMillis()%10<2)    mapPointer->infect(pos, 3);
+            
+            break;
+        }else{
+            drawShip = true;// if on water draw ship
         }
     }
 }
@@ -217,7 +346,8 @@ void swarmBoid::alterVector(){
     }
     
     if(vel.length()  < maxSpeed/10){// if a boid is slower than the minimum speed it gets sped up
-        vel.set(1,1);
+        vel.normalize();
+        vel *=10;
     }
     //-------------------------------------------
     if( pos.x >= ofGetWidth() ){ // if a boid hits a wall it bounces in the correct direction
