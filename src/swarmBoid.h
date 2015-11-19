@@ -13,7 +13,7 @@
 #include "ofMain.h"
 #include <stdio.h>
 #include "vectorMap.h"
-
+#include "ripple.h"
 
 
 
@@ -26,7 +26,7 @@ class swarmBoid{
     vector<swarmBoid*> swarmPointer;
     vector<ofVec4f> vectorPos;
     
-    //vector<water> ripple;
+    vector<ripple> ripples;
     
     unsigned long oldmillis;
     
