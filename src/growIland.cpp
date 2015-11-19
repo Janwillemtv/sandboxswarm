@@ -21,8 +21,23 @@ growIland::growIland(ofVec2f position){ // let land grow with fauna
     influence = 0;
 }
 
+void growIland::set(){
+    
+}
 
 void growIland::update(){//update land
+    
+    if(red+influence>=255) {
+        c.set(255,0,blue);
+        influence = 255-red;
+    }
+    else if(green-influence>=255){
+        c.set(0,255,blue);
+        influence =-1* (255-green);
+    }
+    else if(green-influence<=0) c.set(255,0,blue);
+    else if(red+influence<=0) c.set(0,255,blue);
+    else c.set((int)red+influence,(int)green-influence,blue);
    
     size += growFac;
     if(size>finalSize) size = finalSize;//check tree finished growing

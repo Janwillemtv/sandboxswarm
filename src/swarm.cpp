@@ -8,8 +8,7 @@
 #include "ofMain.h"
 #include "swarm.h"
 
-
-swarm::swarm(int mode, int num,vectorMap * mapPointer, vector<water>* ripple){
+swarm::swarm(int mode, int num,vectorMap * mapPointer){
     if(mode==1){
         for(int i = 0; i< num; i++){
             p.push_back(new fish());
@@ -21,7 +20,7 @@ swarm::swarm(int mode, int num,vectorMap * mapPointer, vector<water>* ripple){
     }
     
     for(unsigned int i = 0; i < p.size(); i++){ // set swarm
-        p[i]->set(mapPointer,p,i,ripple);
+        p[i]->set(mapPointer,p,i);
     }
 }
 //------------------------------
@@ -42,13 +41,6 @@ void swarm::draw(){
     for(unsigned int i = 0; i < p.size(); i++){
         ofSetColor(0,255,0);
         p[i]->draw();    //draw swarm
-    }
-}
-
-void swarm::drawShadow(){
-    for(unsigned int i = 0; i < p.size(); i++){
-        ofSetColor(0,255,0);
-        p[i]->drawShadow();    //draw swarm
     }
 }
 

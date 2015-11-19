@@ -34,10 +34,11 @@ void ofApp::setup(){ //setup Open Framworks
     ofSetLogLevel("ofThread", OF_LOG_WARNING);
     ofSetVerticalSync(true);//verical sync to decrease screen tearing
 
+
     
     //init all objects
-    fish = new swarm(1,50,&map,&ripples);
-    people = new swarm(2,10,&map,&ripples);
+    fish = new swarm(1,100,&map);
+    people = new swarm(2,10,&map);
     
     
 }
@@ -47,41 +48,13 @@ void ofApp::update(){//update all the objects
     map.update();
     fish->update();
     people->update();
-    
-    
-    if(!(ripples).empty()){
-    
-    for(int j = 0; j<(ripples).size(); j++){//update trees
-        ripples[j].update();
-    }
-    
-        
-        
-    for (auto it = ripples.end(); it != ripples.begin();){// check if the trees are still in a blob
-        
-        
-        if(!(it)->returnSize()){
-            it--;
-        }else{
-                it = ripples.erase(it);// if the timer exceeds one second the tree is removed
-        }
-        
-    }
-    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){//draw all objects
-    ofBackgroundGradient(ofColor(20,20,60), ofColor(0,0,40));
-    //map.draw();
-    people->drawShadow();
-    fish->drawShadow();
+    ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
+    map.draw();
     fish->draw();
-    
-    for(int j = 0; j<ripples.size(); j++){//update trees
-        ripples[j].draw();
-    }
-    
     people->draw();
     ofSetColor(255,0,0);
     ofCircle(mouse.x, mouse.y, 15);//draw mouse blob that pushes all

@@ -13,7 +13,6 @@
 #include "ofMain.h"
 #include <stdio.h>
 #include "vectorMap.h"
-#include "water.h"
 
 
 
@@ -27,21 +26,16 @@ class swarmBoid{
     vector<swarmBoid*> swarmPointer;
     vector<ofVec4f> vectorPos;
     
-    vector<water>* ripplePointer;
-    
-    unsigned long oldmillis;
     
     
     ofPoint pos;
     ofPoint vel;
     
-    void set(vectorMap * mapPointer, vector<swarmBoid*>  swarmPointer, int itSelf, vector<water>* ripple);
-    //void update();
+    void set(vectorMap * mapPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
+    void update();
     virtual void draw(){};
-    virtual void update(){};
-    virtual void drawShadow(){};
     float distance(ofVec2f v1, ofVec2f v2);
-    void calcSwarm(int i, int j);
+    void calcSwarm(int i);
     virtual void calcColision(){};
     void alterVector();
     void getMapVector();
@@ -69,8 +63,6 @@ class swarmBoid{
     float mapWeight;
     int numberNeighbours;
     int average;
-    ofImage boat;
-    ofImage shadow;
 
 };
 
@@ -78,20 +70,15 @@ class fish : public swarmBoid{
     public:
         fish();
         void draw();
-        void drawShadow();
-        void update();
         void calcColision();
-    
+
 
 };
 
 class people : public swarmBoid{
 public:
     people();
-    float offset;
     void draw();
-    void drawShadow();
-    void update();
     void calcColision();
     
 };
