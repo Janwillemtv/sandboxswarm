@@ -28,7 +28,7 @@ void swarmBoid::set(vectorMap * map, vector<swarmBoid*>  swarm, int self){
 fish::fish() : swarmBoid(){
     moveCenter = 0.01;//swarming weighfactors
     neighborAtract = 0.001;
-    neighborRepel = 0.03;
+    neighborRepel = 0.04;
     matchVelocity = 0.01;
     objectRepel = 0.01;
     mapWeight = 1.7;
@@ -38,7 +38,7 @@ fish::fish() : swarmBoid(){
     scale = ofRandom(1.0, 1.5);//random scale
     
 }
-
+//===================================================================
 people::people() : swarmBoid(){
     moveCenter = 0.007;//swarming weighfactors
     neighborAtract = 0.001;
@@ -49,7 +49,6 @@ people::people() : swarmBoid(){
     average = 1;
     c.set(ofRandom(135.0,145.0),ofRandom(35.0,46.0),ofRandom(70.0,75.0));
     drawShip = true;
-    //================================================
     scale = ofRandom(2.0, 2.5);//random scale
 }
 
@@ -176,7 +175,7 @@ void swarmBoid::getMapVector(){
 
 }
 //=============================================================================
-void swarmBoid::calcColision(){
+void fish::calcColision(){
     
     float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
     float h = ((480.0)-borderTop)/ofGetHeight();
@@ -188,23 +187,40 @@ void swarmBoid::calcColision(){
         
         line.addVertices(blob.pts);
         line.close();
-        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
-            if(mode==1){
+        if(line.inside(floor(((pos.x+2*vel.x)*w)+(0.5*borderSide)),(floor(((pos.y+2*vel.y)*h))))){// if the boid is in the blob
                 mapPointer->infect(pos, -5);
                 float temp = vel.length();
                 vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
                 vel.normalize();// set maximal velocity away from blob
                 vel *= -10;
                 c.set(255,0,0);
-            }
-            if(mode == 2) {
-                drawShip = false;// if on land dont draw a ship
-                if(ofGetElapsedTimeMillis()%10<2)    mapPointer->infect(pos, 3);
-            }
+            
             break;
         }else{
-            if(mode == 2) drawShip = true;// if on water draw ship
-            if(mode==1)c.set(255,204,0);
+            c.set(255,204,0);
+        }
+    }
+}
+//=============================================================================
+void people::calcColision(){
+    
+    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
+    float h = ((480.0)-borderTop)/ofGetHeight();
+    
+    for(int i = 0; i < mapPointer->contour.nBlobs; i++) {// check for every blob found
+        ofxCvBlob blob = mapPointer->contour.blobs.at(i);
+        
+        ofPolyline line;
+        
+        line.addVertices(blob.pts);
+        line.close();
+        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
+                drawShip = false;// if on land dont draw a ship
+                if(ofGetElapsedTimeMillis()%10<2)    mapPointer->infect(pos, 3);
+            
+            break;
+        }else{
+            drawShip = true;// if on water draw ship
         }
     }
 }

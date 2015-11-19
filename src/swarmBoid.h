@@ -36,7 +36,7 @@ class swarmBoid{
     virtual void draw(){};
     float distance(ofVec2f v1, ofVec2f v2);
     void calcSwarm(int i);
-    void calcColision();
+    virtual void calcColision(){};
     void alterVector();
     void getMapVector();
     void mouseUpdate(int x, int y);
@@ -70,6 +70,7 @@ class fish : public swarmBoid{
     public:
         fish();
         void draw();
+        void calcColision();
 
 
 };
@@ -78,7 +79,7 @@ class people : public swarmBoid{
 public:
     people();
     void draw();
-    
+    void calcColision();
     
 };
 #endif

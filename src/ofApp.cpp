@@ -33,12 +33,11 @@ void ofApp::setup(){ //setup Open Framworks
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetLogLevel("ofThread", OF_LOG_WARNING);
     ofSetVerticalSync(true);//verical sync to decrease screen tearing
-    map.set();
+
 
     
-    int num = 50;
     //init all objects
-    fish = new swarm(1,num,&map);
+    fish = new swarm(1,100,&map);
     people = new swarm(2,10,&map);
     
     
