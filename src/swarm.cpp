@@ -8,6 +8,7 @@
 #include "ofMain.h"
 #include "swarm.h"
 
+<<<<<<< Updated upstream
 swarm::swarm(int mode, int num,vectorMap * mapPointer){
     if(mode==1){
         for(int i = 0; i< num; i++){
@@ -22,6 +23,12 @@ swarm::swarm(int mode, int num,vectorMap * mapPointer){
     for(unsigned int i = 0; i < p.size(); i++){ // set swarm
         p[i]->set(mapPointer,p,i);
     }
+=======
+swarm::swarm(int mod, int num,vectorMap * mapPointer){
+    mode = mod;
+    if(mode==1)p.push_back(new fish()); // create vector of pointers
+    if(mode==2)p.assign(num, new people(mapPointer,this));
+>>>>>>> Stashed changes
 }
 //------------------------------
 
@@ -29,9 +36,13 @@ swarm::swarm(int mode, int num,vectorMap * mapPointer){
 void swarm::update(){
 
     for(unsigned int i = 0; i < p.size(); i++){
+<<<<<<< Updated upstream
         
         p[i]->update(); // update swarm
+=======
+>>>>>>> Stashed changes
         
+        if(mode==1)((fish)p[i]).update(i); // update swarm
     }
 
 }

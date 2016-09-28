@@ -17,10 +17,12 @@ swarmBoid::swarmBoid(){
     vel.x = ofRandom(-3.9, 3.9);//random velocity
     vel.y = ofRandom(-3.9, 3.9);
     maxSpeed = 3;
+
 }
 
 
 //------------------------------------------------------------------
+
 void swarmBoid::set(vectorMap * map, vector<swarmBoid*>  swarm, int self){
     mapPointer = map;
     swarmPointer = swarm;
@@ -60,6 +62,9 @@ people::people() : swarmBoid(){
     drawShip = true;
     scale = ofRandom(2.0, 2.5);//random scale
 }
+=======
+
+>>>>>>> Stashed changes
 
 //====================================================================
 void fish::update(){
@@ -96,6 +101,7 @@ void fish::update(){
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+<<<<<<< Updated upstream
 void people::update(){
     nRepel.set(0,0); // the vector to repel from nearby boids
     oRepel.set(0,0); // the vector to repel from objects
@@ -229,6 +235,30 @@ void people::drawShadow(){
     glPopMatrix();
 
     
+=======
+//====================================================================
+void swarmBoid::draw(){
+//    
+////    line.clear();
+////    line.addVertex(pos.x,pos.y);
+////    line.addVertex(pos.x+(20*vel.x),pos.y+(20*vel.y));
+////    line.close();
+////    line.draw();
+//   
+//    
+//            
+////    if(drawShip){// draw the boat
+////        drawBoat();
+////
+////    }
+////    ofSetColor(c);
+////    if(mode==1) { // fish
+////        drawFish();
+////    }
+//    
+////    ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
+//    
+>>>>>>> Stashed changes
 }
 
 //====================================================================

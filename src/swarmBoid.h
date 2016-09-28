@@ -5,17 +5,24 @@
 //  Created by Janwillem te Voortwis on 03/01/15.
 //
 //
+<<<<<<< Updated upstream
 //#pragma once
 
 #ifndef SWARMBOID_H
 #define SWARMBOID_H
+=======
+#ifndef FISH_H
+#define FISH_H
+#ifndef PEOPLE_H
+#define PEOPLE_H
+#pragma once
+>>>>>>> Stashed changes
 
 #include "ofMain.h"
 #include <stdio.h>
 #include "vectorMap.h"
-
-
-
+#include "fish.h"
+#include "people.h"
 
 class swarmBoid{
     public:
@@ -23,8 +30,8 @@ class swarmBoid{
     swarmBoid();
     
     vectorMap * mapPointer;
-    vector<swarmBoid*> swarmPointer;
-    vector<ofVec4f> vectorPos;
+    //vector<swarmBoid*> swarmPointer;
+   // vector<ofVec4f> vectorPos;
     
     //vector<water> ripple;
     
@@ -34,11 +41,19 @@ class swarmBoid{
     ofPoint pos;
     ofPoint vel;
     
+<<<<<<< Updated upstream
     void set(vectorMap * mapPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
     //void update();
     virtual void draw(){};
     virtual void update(){};
     virtual void drawShadow(){};
+=======
+    void set(int mode, vectorMap * mapPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
+    void update(vector<swarmBoid> b, int p);
+    virtual void draw();
+    void drawBoat();
+    void drawFish();
+>>>>>>> Stashed changes
     float distance(ofVec2f v1, ofVec2f v2);
     void calcSwarm(int i, int j);
     virtual void calcColision(){};
@@ -95,3 +110,7 @@ public:
     
 };
 #endif
+<<<<<<< Updated upstream
+=======
+#endif
+>>>>>>> Stashed changes
