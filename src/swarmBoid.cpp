@@ -127,36 +127,29 @@ void people::update(){
     
     // alter the vectors (maxSpeed&Worldcollision)
     
-//    
-//    if(!(ripple).empty()){
-//        
-//        for(int j = 0; j<(ripple).size(); j++){//update trees
-//            ripple[j].update();
-//        }
-//        
-//        
-//        
-//        for (auto it = ripple.end(); it != ripple.begin();){// check if the trees are still in a blob
-//            
-//            
-//            if(!(it)->returnSize()){
-//                it--;
-//            }else{
-//                it = ripple.erase(it);// if the timer exceeds one second the tree is removed
-//            }
-//            
-//        }
-//    }
-//    
+    
+    if(!ripples.empty()){
+        
+        for(int j = 0; j<ripples.size(); j++){//update trees
+            ripples[j].update();
+        }
+        
+        
+        
+        for (auto it = ripples.begin(); it != ripples.end();){// check if the trees are still in a blob
+            
+            
+            if(!it->returnSize()){
+                it++;
+            }else{
+                it = ripples.erase(it);// if the timer exceeds one second the tree is removed
+            }
+            
+        }
+    }
     
     
-    
-//    
-//    if(ripple.size()<1000&& ofGetElapsedTimeMillis()-oldmillis>1000) {
-//        ripple.push_back(water(pos));// add a ripple
-//        oldmillis = ofGetElapsedTimeMillis();
-//        cout << "ripple" << endl;
-//    }
+   
 
 }
 //====================================================================
@@ -176,6 +169,11 @@ void fish::draw(){
 
 void people::draw(){
     if(drawShip){
+        
+        for(int j = 0; j<ripples.size(); j++){//update trees
+            ripples[j].draw();
+        }
+        
 
         double angle = atan2(vel.y,vel.x);
         
@@ -183,13 +181,21 @@ void people::draw(){
         ofTranslate(pos.x,pos.y);
         ofRotate(((angle/(2*PI))*360)+180);
         ofSetColor(255);
+        cout << angle << endl;
+        ripples.push_back(ripple(ofVec2f(pos.x+(-10*cos(angle+ofDegToRad(90))),pos.y+(-10*sin(angle+ofDegToRad(90))))));// add a ripple
+        ripples.push_back(ripple(ofVec2f(pos.x+(10*cos(angle+ofDegToRad(90))),pos.y+(10*sin(angle+ofDegToRad(90))))));// add a ripple
         ofEnableAlphaBlending();
         boat.draw(-30,-15,60,30);
         ofDisableAlphaBlending();
         
+        
         glPushMatrix();
         ofTranslate(0,10);
-        ofRotate(30*sin((ofGetElapsedTimef()*3)+offset+185));
+        float angleTemp = 30*sin((ofGetElapsedTimef()*3)+offset+185);
+        ofRotate(angleTemp);
+       
+   
+
         ofSetColor(148,102,1);
         ofSetLineWidth(3);
         ofLine(0,0,0,30);
