@@ -18,6 +18,9 @@ class vectorMap{
     public:
     vectorMap();
     vector<ofVec4f> vec;
+    vector<ofFloatColor> color;
+    ofMesh mesh;
+    ofMesh * getMesh();
     void set();
     void update();
     void draw();

@@ -23,6 +23,8 @@ class growIland{
         void setNull(unsigned int time);
     
         ofVec2f pos;
+        ofImage tree;
+        int angle;
     
         int growFac;
         int size;

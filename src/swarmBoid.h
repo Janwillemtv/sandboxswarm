@@ -22,9 +22,10 @@ class swarmBoid{
     
     swarmBoid();
     
-    vectorMap * mapPointer;
+    ofMesh * mapPointer;
     vector<swarmBoid*> swarmPointer;
     vector<ofVec4f> vectorPos;
+    vector<ofFloatColor> colors;
     
     vector<ripple> ripples;
     
@@ -34,7 +35,7 @@ class swarmBoid{
     ofPoint pos;
     ofPoint vel;
     
-    void set(vectorMap * mapPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
+    void set(ofMesh * mapPointer, vector<swarmBoid*>  swarmPointer, int itSelf);
     //void update();
     virtual void draw(){};
     virtual void update(){};

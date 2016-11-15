@@ -17,13 +17,18 @@ vectorMap::vectorMap(){
     min = 7;
     drawVector = calibrate = thresh = false;
     seaColor =  ofColor(28,91,160);
+    color.assign((row+1)*(column+1),ofFloatColor());
+    
+    mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+    mesh.enableColors();
+    
 }
 //-------------------------------------------------
 void vectorMap::set(){
     nearThreshold = 250;//initail values
     farThreshold = 243;
     
-    line.assign((row*column),ofPolyline());
+    line.assign(((row+1)*(column+1)),ofPolyline());
     //init kinect
     kinect.setRegistration(true);
     kinect.init();
@@ -31,23 +36,28 @@ void vectorMap::set(){
     kinect.open();
     // reserve space for the images
     colorImg.allocate(kinect.width, kinect.height); //image for camera
-    grayImage.allocate(kinect.width, kinect.height);// image for grayscale heightmap
-    seaImg.allocate(kinect.width, kinect.height,OF_IMAGE_COLOR);
-    col.allocate(kinect.width, kinect.height,OF_PIXELS_RGB);
+//    grayImage.allocate(kinect.width, kinect.height);// image for grayscale heightmap
+//    seaImg.allocate(kinect.width, kinect.height,OF_IMAGE_COLOR);
+//    col.allocate(kinect.width, kinect.height,OF_PIXELS_RGB);
     
     colorImg.setROI(borderSide/2, borderTop, colorImg.getWidth()-borderSide, colorImg.getHeight());
-    grayImage.setROI(borderSide/2, borderTop, grayImage.getWidth()-borderSide, grayImage.getHeight());// we use ROI because bad kinect
+//    grayImage.setROI(borderSide/2, borderTop, grayImage.getWidth()-borderSide, grayImage.getHeight());// we use ROI because bad kinect
     
-    vec.assign((row*column),ofVec4f());//empty array of 4d vectors for the height difference vectors
+    vec.assign((row*column+column+row),ofVec4f());//empty array of 4d vectors for the height difference vectors
+    color.assign((row*column),ofColor());
     reposition();
 
 }
 //-------------------------------------------------
 void vectorMap::update(){
-    
+    if(ofGetElapsedTimeMillis()%500<=20){
     getKinectImage();
     calcVectors();
-    makeTrees();
+       
+       }
+    if(ofGetElapsedTimeMillis()%20<=5){
+         makeTrees();
+    }
     
     for(int j = 0; j<trees.size(); j++){//update trees
         trees[j].update();
@@ -59,7 +69,8 @@ void vectorMap::draw(){
     float w = ((640.0)-(borderSide*1.5));
     float h = ((480.0)-borderTop);
     ofSetColor(255); //set values back to white
-    seaImg.drawSubsection(0,0, ofGetWidth(),ofGetHeight(), borderSide/2, borderTop,w,h);//draw sea
+    //seaImg.drawSubsection(0,0, ofGetWidth(),ofGetHeight(), borderSide/2, borderTop,w,h);//draw sea
+    mesh.draw();
     for(int j = 0; j<trees.size(); j++){ // draw the trees
         trees[j].draw();
     }
@@ -70,13 +81,17 @@ void vectorMap::draw(){
     }
     //---------------------------------------------------------
     if(drawVector){
-    ofSetColor(255, 0, 0);//set color for vectors
+    //set color for vectors
     for(int i = 0; i <vec.size(); i++){ //draw the vector map
+        //ofSetColor(color[i]);
         line[i].clear();
         line[i].addVertex(vec[i].x,vec[i].y);
-        line[i].addVertex(vec[i].x+(5*vec[i].z),vec[i].y+(5*vec[i].w));
+        ofSetColor(255);
+        line[i].addVertex(vec[i].x-10,vec[i].y-10);
+        //line[i].addVertex(vec[i].x+(5*vec[i].z),vec[i].y+(5*vec[i].w));
         line[i].close();
         line[i].draw();
+    
         
     }
     }
@@ -94,15 +109,14 @@ void vectorMap::draw(){
 
 //================================================
 void vectorMap::reposition(){
-    int rowCount = 1;
-    int columnCount = 1;
+    int rowCount = 0;
+    int columnCount = 0;
     for(int i = 0; i <vec.size(); i++){// set the positions of the vectors
         vec[i].x = (ofGetWidth()/column)*columnCount;
         vec[i].y = (ofGetHeight()/row)*rowCount;
-        
         columnCount++;
         if(columnCount>column){
-            columnCount = 1;
+            columnCount = 0;
             rowCount ++;
         }
     }
@@ -117,71 +131,103 @@ void vectorMap::getKinectImage(){
             colorImg.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
             
             // load grayscale depth image from the kinect source
-            grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
+            //grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
             
-            unsigned char * pix = grayImage.getPixels();
+//            unsigned char * pix = grayImage.getPixels();
+//            
+//            int numPixels = grayImage.getWidth() * grayImage.getHeight();// threshold the image from grayscale height data
+//            for(int i = 0; i < numPixels; i++) {
+//                if(pix[i] < nearThreshold && pix[i] > farThreshold) {
+//                    pix[i] = 255;
+//                } else {
+//                    pix[i] = 0;
+//                }
+//            }
             
-            int numPixels = grayImage.getWidth() * grayImage.getHeight();// threshold the image from grayscale height data
-            for(int i = 0; i < numPixels; i++) {
-                if(pix[i] < nearThreshold && pix[i] > farThreshold) {
-                    pix[i] = 255;
-                } else {
-                    pix[i] = 0;
-                }
-            }
+       //     grayImage.flagImageChanged();//say that the image is changed
             
-            grayImage.flagImageChanged();//say that the image is changed
-            
-            contour.findContours(grayImage, 200, 150000, 10, false);// find the contours in the image
+      //      contour.findContours(grayImage, 200, 150000, 10, false);// find the contours in the image
            
-            
-            for(int i = 0; i < numPixels; i++) {//set the sea and island colors
-                if(pix[i] ==255) {
-                    col.setColor(i*3, ofColor(255));
-                } else {
-                    col.setColor(i*3,seaColor);
-                }
-                
-            }
-            seaImg = col;// convert to an ofimage so that it can be drawn
-            
+//            
+//            for(int i = 0; i < numPixels; i++) {//set the sea and island colors
+//                if(pix[i] ==255) {
+//                    col.setColor(i*3, ofColor(255));
+//                } else {
+//                    col.setColor(i*3,seaColor);
+//                }
+//                
+//            }
+//            seaImg = col;// convert to an ofimage so that it can be drawn
+//            
         }
     }
 
 }
 //========================================
 void vectorMap::calcVectors(){
-
-    int rowCount = 1;
-    int columnCount = 1;
+    mesh.clear();
+    mesh.enableIndices();
+    int rowCount = 0;
+    int columnCount = 0;
     float w = ((640.0)-(borderSide*1.5))/ofGetWidth();//translation factors for kinect
     float h = ((480.0)-borderTop)/ofGetHeight();
     
     for(int i = 0; i <vec.size(); i++){//calculate the vectors
         diffx = 0.0;
         diffy = 0.0;
+
         
+//            if((columnCount+1)<column){// calculate height difference in x direction
+//                        
+//                diffx += kinect.getDistanceAt((int)((vec[i].x*w)+(0.5*borderSide)), (int)((vec[i].y*h)+borderTop))-kinect.getDistanceAt((int)((vec[i+1].x*w)+(0.5*borderSide)), (int)((vec[i+1].y*h)+borderTop));
+//            }
+//            if((1+rowCount)<=row){// calculate height difference in y direction
+//                diffy += kinect.getDistanceAt((int)((vec[i].x*w)+(0.5*borderSide)), (int)(vec[i].y*h)+borderTop)-kinect.getDistanceAt((int)((vec[i+column].x*w)+(0.5*borderSide)), (int)(vec[i+column].y*h)+borderTop);
+//                
+//            }
+//        
+//        //if a maximum or minimum is exceeded the vector is set to zero
+//        if((diffx)>max||(diffx)< -max||(diffx>-min && diffx<min))diffx = 0;
+//        if((diffy)>max||(diffy)< -max||(diffy>-min && diffy<min))diffy = 0;
         
-            if((columnCount+1)<column){// calculate height difference in x direction
-                
-                diffx += kinect.getDistanceAt((int)((vec[i].x*w)+(0.5*borderSide)), (int)((vec[i].y*h)+borderTop))-kinect.getDistanceAt((int)((vec[i+1].x*w)+(0.5*borderSide)), (int)((vec[i+1].y*h)+borderTop));
-            }
-            if((1+rowCount)<=row){// calculate height difference in y direction
-                diffy += kinect.getDistanceAt((int)((vec[i].x*w)+(0.5*borderSide)), (int)(vec[i].y*h)+borderTop)-kinect.getDistanceAt((int)((vec[i+column].x*w)+(0.5*borderSide)), (int)(vec[i+column].y*h)+borderTop);
-                
-            }
+        //vec[i].z = (diffx) * -weight;// set the vectors
+      //  vec[i].w = (diffy) * -weight;
         
-        //if a maximum or minimum is exceeded the vector is set to zero
-        if((diffx)>max||(diffx)< -max||(diffx>-min && diffx<min))diffx = 0;
-        if((diffy)>max||(diffy)< -max||(diffy>-min && diffy<min))diffy = 0;
-        
-        vec[i].z = (diffx) * -weight;// set the vectors
-        vec[i].w = (diffy) * -weight;
-        columnCount++;
-        if(columnCount>column){
-            columnCount = 1;
-            rowCount ++;
+        mesh.addVertex(ofVec3f(vec[i].x,vec[i].y,0));
+        int dist = kinect.getDistanceAt((int)((vec[i].x*w)+(0.5*borderSide)), (int)((vec[i].y*h)+borderTop));
+       // cout<<dist<<"    "<<i<<endl;
+        vec[i].z = (float)dist;
+        ofColor c;
+        if(dist<1100){
+            c.r = 1100-dist+130;
+            c.g = 1100-dist+130;
+            c.b = 0;
+          //  cout<<i<<endl;
+        }else{
+            c.b = 1150-dist+150;
+            c.r = 1150-dist+100;
+            c.g = 1150-dist+100;
         }
+        mesh.addColor(c);
+        
+        
+        columnCount++;
+        
+        if(rowCount!=0&&columnCount>1){
+   
+            mesh.addTriangle(i-(column+2), i-1, i);
+            mesh.addTriangle(i-(column+2), i-(column+1), i);
+        }
+
+        if(columnCount>column){
+            columnCount = 0;
+          
+            rowCount ++;
+            
+//
+        }
+//
+        
         
     }
 
@@ -192,44 +238,38 @@ void vectorMap::makeTrees(){
 
     float w = ((640.0)-(borderSide*1.5))/ofGetWidth();//translation factors
     float h = ((480.0)-borderTop)/ofGetHeight();
-    
+    color = mesh.getColors();
     
     ofVec2f pos;
     pos.set((int)ofRandom(0.0,ofGetWidth()),(int)ofRandom(0.0,ofGetHeight()));// choose a random position
     
-    if(contour.nBlobs == 0  && trees.size()>0){// check if this position is inside a blob
-        if(ofGetElapsedTimeMillis() - trees[0].erase) trees.clear();
+//    if(contour.nBlobs == 0  && trees.size()>0){// check if this position is inside a blob
+//        if(ofGetElapsedTimeMillis() - trees[0].erase) trees.clear();
+//    }
+    
+    int closestId = (round((pos.x)/(ofGetWidth()/column)))+((round((pos.y)/(ofGetHeight()/row)))*(column+1));
+    ofFloatColor c = color[closestId];
+    
+    if(c.r*255>170&&c.b==0){
+            if(trees.size()<50)  trees.push_back(growIland(pos));// add a tree
+        cout<<"test"<<endl;
     }
-    for(int i = 0; i < contour.nBlobs; i++) {
-        ofxCvBlob blob = contour.blobs.at(i);
-       
-        // do something fun with blob
+    
+    
+    for (auto it = trees.begin(); it != trees.end();){// check if the trees are still in a blob
         
-        ofPolyline line;
-        
-        line.addVertices(blob.pts);
-        line.close();
-        if(line.inside(floor(((pos.x)*w)+(0.5*borderSide)),floor((pos.y*h)))){// ifso
-            if(trees.size()<1000)  trees.push_back(growIland(pos));// add a tree
+        int closestId = (round((it->pos.x)/(ofGetWidth()/column)))+((round((it->pos.y)/(ofGetHeight()/row)))*(column+1));
+        ofFloatColor c = mesh.getColor(closestId);
+        if(c.r*255>170&&c.b==0){
+            it->setNull(ofGetElapsedTimeMillis());// ifso set a timer
             
+            it++;
+        }else{
+            
+            if(ofGetElapsedTimeMillis() - it->erase>50){//if not
+                it = trees.erase(it);// if the timer exceeds one second the tree is removed
+            }else it++;
         }
-        
-        for (auto it = trees.begin(); it != trees.end();){// check if the trees are still in a blob
-            
-            
-            if(line.inside(floor((it->pos.x*w)+(0.5*borderSide)),floor((it->pos.y*h)))){
-                it->setNull(ofGetElapsedTimeMillis());// ifso set a timer
-                
-                it++;
-            }else{
-                
-                if(ofGetElapsedTimeMillis() - it->erase>1000){//if not
-                    it = trees.erase(it);// if the timer exceeds one second the tree is removed
-                }else it++;
-            }
-            
-        }
-        
         
     }
 
@@ -248,5 +288,9 @@ void vectorMap::close(){
     kinect.setCameraTiltAngle(0); // zero the tilt on exit
     kinect.close();
     
+}
+
+ofMesh * vectorMap::getMesh(){
+    return &mesh;
 }
 

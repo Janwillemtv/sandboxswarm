@@ -15,7 +15,7 @@
 
 class swarm{
     public:
-        swarm(int mode, int num,vectorMap * mapPointer);
+        swarm(int mode, int num,ofMesh * mapPointer);
         //void set(int mode, int num,vectorMap * mapPointer);
         void update();
         void draw();

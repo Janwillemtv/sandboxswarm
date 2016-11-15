@@ -21,11 +21,12 @@ swarmBoid::swarmBoid(){
 
 
 //------------------------------------------------------------------
-void swarmBoid::set(vectorMap * map, vector<swarmBoid*>  swarm, int self){
+void swarmBoid::set(ofMesh * map, vector<swarmBoid*>  swarm, int self){
     mapPointer = map;
     swarmPointer = swarm;
     itSelf = self;
     oldmillis = ofGetElapsedTimeMillis();
+    colors.assign((row+1)*(column+1), ofFloatColor());
 }
 //===================================================================
 fish::fish() : swarmBoid(){
@@ -158,6 +159,14 @@ void fish::draw(){
     ofEnableAlphaBlending();
     boat.draw(-15,-15,30,30);
     ofDisableAlphaBlending();
+//    ofRotate(-20);
+//    ofCircle(0,-100,2);
+//    ofRotate(40);
+//    ofCircle(0,-100,2);
+//    ofRotate(-80);
+//    ofCircle(0,-60,2);
+//    ofRotate(120);
+//    ofCircle(0,-60,2);
     glPopMatrix();
 }
 
@@ -175,7 +184,7 @@ void people::draw(){
         ofTranslate(pos.x,pos.y);
         ofRotate(((angle/(2*PI))*360)+180);
         ofSetColor(255);
-        cout << angle << endl;
+    
         ripples.push_back(ripple(ofVec2f(pos.x+(-10*cos(angle+ofDegToRad(90))),pos.y+(-10*sin(angle+ofDegToRad(90))))));// add a ripple
         ripples.push_back(ripple(ofVec2f(pos.x+(10*cos(angle+ofDegToRad(90))),pos.y+(10*sin(angle+ofDegToRad(90))))));// add a ripple
         ofEnableAlphaBlending();
@@ -288,60 +297,114 @@ void swarmBoid::calcSwarm(int i, int repelDist){
 
 //============================================================================
 void swarmBoid::getMapVector(){
-    int closestId = (round(swarmPointer[itSelf]->pos.x/(ofGetWidth()/column))-1)+((round(swarmPointer[itSelf]->pos.y/(ofGetHeight()/row))-1)*row);// the the id of the closest vector in vector map
-    oRepel.x += (mapPointer->vec[closestId].z)*mapWeight;// add the vectormap-vector
-    oRepel.y += (mapPointer->vec[closestId].w)*mapWeight;
+    int fact = 100;
+    int sidefact = 60;
+    ofVec2f temp = ofVec2f(swarmPointer[itSelf]->vel.x,swarmPointer[itSelf]->vel.y);
+    ofVec2f left = temp.getRotated(-20.0);
+    ofVec2f right = temp.getRotated(20.0);
+    ofVec2f leftSide = temp.getRotated(-60.0);
+    ofVec2f rightSide = temp.getRotated(60.0);
+   
+    left.normalize();
+    right.normalize();
+    int closestIdLeft = (round((swarmPointer[itSelf]->pos.x+(left.x*fact))/(ofGetWidth()/column)))+((round((swarmPointer[itSelf]->pos.y+(left.y*fact))/(ofGetHeight()/row)))*(column+1));// the the id of the closest vector in vector map
+    
+    int closestIdLeftSide = (round((swarmPointer[itSelf]->pos.x+(leftSide.x*sidefact))/(ofGetWidth()/column)))+((round((swarmPointer[itSelf]->pos.y+(leftSide.y*sidefact))/(ofGetHeight()/row)))*(column+1));// the the id of the closest vector in vector map
+    
+    int closestIdRight = (round((swarmPointer[itSelf]->pos.x+(right.x*fact))/(ofGetWidth()/column)))+((round((swarmPointer[itSelf]->pos.y+(right.y*fact))/(ofGetHeight()/row)))*(column+1));// the the id of the closest vector in vector map
+    
+     int closestIdRightSide = (round((swarmPointer[itSelf]->pos.x+(rightSide.x*sidefact))/(ofGetWidth()/column)))+((round((swarmPointer[itSelf]->pos.y+(rightSide.y*sidefact))/(ofGetHeight()/row)))*(column+1));// the the id of the closest vector in vector map
+    
+//    oRepel.x += (mapPointer->vec[closestId].z)*mapWeight;// add the vectormap-vector
+//    oRepel.y += (mapPointer->vec[closestId].w)*mapWeight;
+    //cout<<itSelf<<"   "<<closestId<<endl;
+   // cout<<closestId<<endl;
+    colors = mapPointer->getColors();
+    ofFloatColor cLeft = colors[closestIdLeft];
+    ofFloatColor cRight = colors[closestIdRight];
+    ofFloatColor cLeftSide = colors[closestIdLeftSide];
+    ofFloatColor cRightSide = colors[closestIdRightSide];
+    
+    
+    if(cLeft.r*255>130&&cLeft.b*255==0&&cRight.r*255>130&&cRight.b*255==0){
+        swarmPointer[itSelf]->vel *=-1;
+    }else
+    if(cLeft.r*255>130&&cLeft.b*255==0){
+        //swarmPointer[itSelf]->vel *= -1;
+        swarmPointer[itSelf]->vel -= left.getRotated(-70)*0.2;
+    }else
+    if(cRight.r*255>130&&cRight.b*255==0){
+        swarmPointer[itSelf]->vel -= right.getRotated(70)*0.2;
+    }
+    
+    if(cLeftSide.r*255>130&&cLeftSide.b*255==0){
+        //swarmPointer[itSelf]->vel *= -1;
+        swarmPointer[itSelf]->vel -= left.getRotated(-70)*0.2;
+    }
+    if(cRightSide.r*255>130&&cRightSide.b*255==0){
+        swarmPointer[itSelf]->vel -= right.getRotated(70)*0.2;
+    }
+
+    //if(colors[0].r>200)cout<<"test"<<endl;
+//    try{
+//    ofFloatColor c = mapPointer->getColor(0);
+//    //cout<<c.r<<endl;
+//    if(c.r>200){
+//       // cout<<closestId<<"    "<<mapPointer->vec[closestId].z<<endl;
+//        oRepel -= swarmPointer[itSelf]->vel*20;
+//    }
+//    }catch(int e){}
 
 }
 //=============================================================================
 void fish::calcColision(){
-    
-    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
-    float h = ((480.0)-borderTop)/ofGetHeight();
-    
-    for(int i = 0; i < mapPointer->contour.nBlobs; i++) {// check for every blob found
-        ofxCvBlob blob = mapPointer->contour.blobs.at(i);
-
-        ofPolyline line;
-        
-        line.addVertices(blob.pts);
-        line.close();
-        if(line.inside(floor(((pos.x+2*vel.x)*w)+(0.5*borderSide)),(floor(((pos.y+2*vel.y)*h))))){// if the boid is in the blob
-                mapPointer->infect(pos, -5);
-                float temp = vel.length();
-                vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
-                vel.normalize();// set maximal velocity away from blob
-                vel *= -10;
-                c.set(255,0,0);
-            
-            break;
-        }else{
-            c.set(255,204,0);
-        }
-    }
+//    
+//    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
+//    float h = ((480.0)-borderTop)/ofGetHeight();
+//    
+//    for(int i = 0; i < mapPointer->contour.nBlobs; i++) {// check for every blob found
+//        ofxCvBlob blob = mapPointer->contour.blobs.at(i);
+//
+//        ofPolyline line;
+//        
+//        line.addVertices(blob.pts);
+//        line.close();
+//        if(line.inside(floor(((pos.x+2*vel.x)*w)+(0.5*borderSide)),(floor(((pos.y+2*vel.y)*h))))){// if the boid is in the blob
+//                mapPointer->infect(pos, -5);
+//                float temp = vel.length();
+//                vel.set(blob.centroid.x - ((pos.x*w)+(0.5*borderSide)),blob.centroid.y - (pos.y*h));
+//                vel.normalize();// set maximal velocity away from blob
+//                vel *= -10;
+//                c.set(255,0,0);
+//            
+//            break;
+//        }else{
+//            c.set(255,204,0);
+//        }
+//    }
 }
 //=============================================================================
 void people::calcColision(){
-    
-    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
-    float h = ((480.0)-borderTop)/ofGetHeight();
-    
-    for(int i = 0; i < mapPointer->contour.nBlobs; i++) {// check for every blob found
-        ofxCvBlob blob = mapPointer->contour.blobs.at(i);
-        
-        ofPolyline line;
-        
-        line.addVertices(blob.pts);
-        line.close();
-        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
-                drawShip = false;// if on land dont draw a ship
-                if(ofGetElapsedTimeMillis()%10<2)    mapPointer->infect(pos, 3);
-            
-            break;
-        }else{
-            drawShip = true;// if on water draw ship
-        }
-    }
+//    
+//    float w = ((640.0)-(borderSide*1.5))/ofGetWidth();// used for to remove black bars in image
+//    float h = ((480.0)-borderTop)/ofGetHeight();
+//    
+//    for(int i = 0; i < mapPointer->contour.nBlobs; i++) {// check for every blob found
+//        ofxCvBlob blob = mapPointer->contour.blobs.at(i);
+//        
+//        ofPolyline line;
+//        
+//        line.addVertices(blob.pts);
+//        line.close();
+//        if(line.inside(floor((pos.x*w)+(0.5*borderSide)),(floor((pos.y*h))))){// if the boid is in the blob
+//                drawShip = false;// if on land dont draw a ship
+//                if(ofGetElapsedTimeMillis()%10<2)    mapPointer->infect(pos, 3);
+//            
+//            break;
+//        }else{
+//            drawShip = true;// if on water draw ship
+//        }
+//    }
 }
 //===============================================================================
 void swarmBoid::alterVector(){

@@ -6,8 +6,8 @@
 
 const int borderTop = 50;
 const int borderSide = 25;
-const int row = 15;
-const int column = 20;
+const int row = 35;
+const int column = 40;
 
 //========================================================================
 int main( ){

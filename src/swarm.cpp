@@ -8,7 +8,7 @@
 #include "ofMain.h"
 #include "swarm.h"
 
-swarm::swarm(int mode, int num,vectorMap * mapPointer){
+swarm::swarm(int mode, int num,ofMesh * mapPointer){
     if(mode==1){
         for(int i = 0; i< num; i++){
             p.push_back(new fish());

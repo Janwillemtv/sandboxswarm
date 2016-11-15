@@ -9,11 +9,13 @@
 #include "growIland.h"
 
 growIland::growIland(ofVec2f position){ // let land grow with fauna
-    finalSize = (int)(ofRandom(10.0,20.0));
+    tree.loadImage("tree_mini.png");
+    finalSize = (int)(ofRandom(20.0,30.0));
     pos = position;
     growFac = (int)(ofRandom(1.0,2.0));
     size = 0;
     erase = 0;
+    angle = ofRandom(0,50);
     red =ofRandom(15.0,50.0);
     green = ofRandom(200,255.0);
     blue = ofRandom(15.0,50.0);
@@ -45,7 +47,15 @@ void growIland::update(){//update land
 
 void growIland::draw(){ //draw
     ofSetColor(c);
-    ofCircle(pos, size);
+    glPushMatrix();
+    ofTranslate(pos.x,pos.y);
+    ofRotate(angle);
+    //ofSetColor(255);
+    ofEnableAlphaBlending();
+    tree.draw(-size/2,-size/2,size,size);
+    ofDisableAlphaBlending();
+    glPopMatrix();
+    //ofCircle(pos, size);
 }
 
 void growIland::setNull(unsigned int time){//resest land

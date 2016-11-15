@@ -34,12 +34,12 @@ void ofApp::setup(){ //setup Open Framworks
     ofSetLogLevel("ofThread", OF_LOG_WARNING);
     ofSetVerticalSync(true);//verical sync to decrease screen tearing
     map.set();
-
+    ofMesh * temp = map.getMesh();
     
     int num = 50;
     //init all objects
-    fish = new swarm(1,num,&map);
-    people = new swarm(2,10,&map);
+    fish = new swarm(1,num,temp);
+    people = new swarm(2,4,temp);
     
     
 }
@@ -54,7 +54,7 @@ void ofApp::update(){//update all the objects
 //--------------------------------------------------------------
 void ofApp::draw(){//draw all objects
     ofBackgroundGradient(ofColor(100,100,160), ofColor(40,40,100));
-    //map.draw();
+    map.draw();
     people->drawShadow();
     fish->drawShadow();
     fish->draw();
