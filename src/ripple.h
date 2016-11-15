@@ -21,7 +21,7 @@ public:
     void update();
     void draw();
     void setNull(unsigned int time);
-    Boolean returnSize();
+    bool returnSize();
     ofVec2f pos;
     
     float growFac;

@@ -44,7 +44,7 @@ void ripple::setNull(unsigned int time){//resest land
     erase = time;
 }
 
-Boolean ripple::returnSize(){
+bool ripple::returnSize(){
     if(finalSize == size)return true;
     else return false;
 }
