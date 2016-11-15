@@ -4,6 +4,8 @@ then
     echo "update needed"
     git fetch --all
     git reset --hard origin/master
+    alias gcc='clang'
+    alias g++='clang++'
     make
 fi
 
