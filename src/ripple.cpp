@@ -35,7 +35,7 @@ void ripple::draw(){ //draw
     ofNoFill();
     ofSetLineWidth(1);
     ofEnableAlphaBlending();
-    ofCircle(pos, (int)size);
+    ofDrawCircle(pos, (int)size);
     ofDisableAlphaBlending();
     ofFill();
 }

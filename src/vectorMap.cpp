@@ -128,8 +128,8 @@ void vectorMap::getKinectImage(){
     if(kinect.isConnected()){//get kinectdata if connected
         kinect.update();
         if(kinect.isFrameNew()) {
-            colorImg.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
-            
+            //colorImg.setFromPixels(kinect.getPixels(),kinect.width,kinect.height);
+            colorImg.setFromPixels(kinect.getPixels());
             // load grayscale depth image from the kinect source
             //grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
             

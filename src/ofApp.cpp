@@ -60,7 +60,7 @@ void ofApp::draw(){//draw all objects
     fish->draw();
     people->draw();
     ofSetColor(255,0,0);
-    ofCircle(mouse.x, mouse.y, 15);//draw mouse blob that pushes all
+    ofDrawCircle(mouse.x, mouse.y, 15);//draw mouse blob that pushes all
    
 }
 

@@ -9,7 +9,7 @@
 #include "growIland.h"
 
 growIland::growIland(ofVec2f position){ // let land grow with fauna
-    tree.loadImage("tree_mini.png");
+    tree.load("tree_mini.png");
     finalSize = (int)(ofRandom(20.0,30.0));
     pos = position;
     growFac = (int)(ofRandom(1.0,2.0));

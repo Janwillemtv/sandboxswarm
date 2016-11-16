@@ -30,8 +30,8 @@ void swarmBoid::set(ofMesh * map, vector<swarmBoid*>  swarm, int self){
 }
 //===================================================================
 fish::fish() : swarmBoid(){
-    boat.loadImage("fish.png");
-    shadow.loadImage("fishshadow.png");
+    boat.load("fish.png");
+    shadow.load("fishshadow.png");
     moveCenter = 0.00000;//swarming weighfactors
     neighborAtract = 0.0001;
     neighborRepel = 0.007;
@@ -46,8 +46,8 @@ fish::fish() : swarmBoid(){
 }
 //===================================================================
 people::people() : swarmBoid(){
-    boat.loadImage("boat.png");
-    shadow.loadImage("boatshadow.png");
+    boat.load("boat.png");
+    shadow.load("boatshadow.png");
     offset = ofRandom(0.0,1000.0);
     
     moveCenter = 0.00000;
@@ -201,20 +201,24 @@ void people::draw(){
 
         ofSetColor(148,102,1);
         ofSetLineWidth(3);
-        ofLine(0,0,0,30);
+        ofDrawLine(0,0,0,30);
+        ofSetLineWidth(4);
+        ofDrawLine(0,25,0,30);
         glPopMatrix();
         
         glPushMatrix();
         ofTranslate(0,-10);
         ofRotate(30*sin((ofGetElapsedTimef()*3)+offset));
-        ofLine(0,0,0,-30);
+        ofDrawLine(0,0,0,-30);
+        ofSetLineWidth(4);
+        ofDrawLine(0,25,0,30);
         glPopMatrix();
         
         glPopMatrix();
 
     }
     ofSetColor(c);
-    ofCircle(pos.x, pos.y, scale * 3.0); // draw boids
+    ofDrawCircle(pos.x, pos.y, scale * 3.0); // draw boids
 }
 
 void fish::drawShadow(){
