@@ -1,4 +1,5 @@
 #if you run this hacky script in rc.local for example the sandbox will start at boot.
+exprot DISPLAY=:0
 if [[ $(git status) != *"Your branch is up-to-date with"* ]] 
 then
     echo "update needed"
