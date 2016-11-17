@@ -13,4 +13,5 @@ fi
 
 echo "#################- RUNNING SANDBOX -#############################"
 xinit &
+sleep 2
 ./bin/sandboxswarm
