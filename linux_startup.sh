@@ -18,5 +18,4 @@ xinit &
 
 sleep 2
 xset s off
-./../../../examples/3d/advanced3dExample/bin/advanced3dExample 
-#./bin/sandboxswarm
+./bin/sandboxswarm
