@@ -3,7 +3,7 @@ export DISPLAY=:0
 cd /home/janwillem/sandbox/of_v0.9.7_linux64_release/apps/myApps/sandboxswarm/
 xrandr --output VGA-1 --mode 1024x768
 git fetch --all
-if [[ $(git status) != *"Your branch is behind"* ]] 
+if [[ $(git status) = *"Your branch is behind"* ]] 
 then
     echo "update needed"
   
