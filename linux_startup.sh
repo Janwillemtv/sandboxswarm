@@ -1,5 +1,6 @@
 #if you run this hacky script in rc.local for example the sandbox will start at boot.
 exprot DISPLAY=:0
+cd /home/janwillem/sandbox/of_v0.9.7_linux64_release/apps/myApps/sandboxswarm/
 if [[ $(git status) != *"Your branch is up-to-date with"* ]] 
 then
     echo "update needed"
