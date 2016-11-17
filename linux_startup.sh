@@ -1,5 +1,5 @@
 #if you run this hacky script in rc.local for example the sandbox will start at boot.
-exprot DISPLAY=:0
+export DISPLAY=:0
 cd /home/janwillem/sandbox/of_v0.9.7_linux64_release/apps/myApps/sandboxswarm/
 xrandr --output VGA-1 --mode 1024x768
 git fetch --all
