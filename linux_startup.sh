@@ -14,7 +14,7 @@ fi
 
 echo "#################- RUNNING SANDBOX -#############################"
 xinit &
-
+export DISPLAY=:0
 sleep 6
 xrandr --output VGA-0 --mode 1024x768
 xset s off         # don't activate screensaver
