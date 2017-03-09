@@ -17,5 +17,7 @@ xinit &
 
 sleep 6
 xrandr --output VGA-0 --mode 1024x768
-xset s off
+xset s off         # don't activate screensaver
+xset -dpms         # disable DPMS (Energy Star) features.
+xset s noblank     # don't blank the video device
 ./bin/sandboxswarm
