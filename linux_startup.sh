@@ -1,7 +1,6 @@
 #if you run this hacky script in rc.local for example the sandbox will start at boot.
 export DISPLAY=:0
 cd /home/janwillem/sandbox/of_v0.9.7_linux64_release/apps/myApps/sandboxswarm/
-xrandr --output VGA-0 --mode 1024x768
 git fetch --all
 if [[ $(git status) == *"Your branch is behind"* ]] 
 then
@@ -16,6 +15,7 @@ fi
 echo "#################- RUNNING SANDBOX -#############################"
 xinit &
 
-sleep 2
+sleep 6
+xrandr --output VGA-0 --mode 1024x768
 xset s off
 ./bin/sandboxswarm
